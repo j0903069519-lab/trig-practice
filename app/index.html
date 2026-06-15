@@ -16,6 +16,31 @@
     </header>
 
     <main>
+      <section class="student-panel" aria-label="學生資料">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">作答資料</p>
+            <h2>班級、座號、姓名</h2>
+          </div>
+          <span id="studentStatus" class="status-chip">尚未填寫</span>
+        </div>
+        <form id="studentForm" class="student-form">
+          <label>
+            <span>班級</span>
+            <input id="classInput" name="className" autocomplete="organization" placeholder="例：體育一甲" required>
+          </label>
+          <label>
+            <span>座號</span>
+            <input id="seatInput" name="seatNumber" inputmode="numeric" autocomplete="off" placeholder="例：12" required>
+          </label>
+          <label>
+            <span>姓名</span>
+            <input id="nameInput" name="studentName" autocomplete="name" placeholder="請輸入姓名" required>
+          </label>
+        </form>
+        <p id="studentNotice" class="notice" hidden>請先填寫班級、座號、姓名，再送出批改。</p>
+      </section>
+
       <section class="controls" aria-label="練習設定">
         <label for="paperSelect">選擇練習卷</label>
         <select id="paperSelect"></select>
@@ -40,6 +65,17 @@
       </section>
 
       <section id="resultPanel" class="result-panel" hidden></section>
+
+      <section class="leaderboard" aria-label="排行榜">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">前五高分</p>
+            <h2>排行榜</h2>
+          </div>
+          <button id="clearLeaderboardBtn" type="button">清除紀錄</button>
+        </div>
+        <ol id="leaderboardList" class="leaderboard-list"></ol>
+      </section>
     </main>
 
     <script src="app.js"></script>

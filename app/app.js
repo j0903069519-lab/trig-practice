@@ -1,4 +1,6 @@
 const labels = ["A", "B", "C", "D", "E"];
+const leaderboardKey = "trigPracticeLeaderboard";
+const studentKey = "trigPracticeStudent";
 
 const papers = [
   {
@@ -139,12 +141,20 @@ const state = {
   wrongOnly: false,
 };
 
+const studentForm = document.querySelector("#studentForm");
+const classInput = document.querySelector("#classInput");
+const seatInput = document.querySelector("#seatInput");
+const nameInput = document.querySelector("#nameInput");
+const studentStatus = document.querySelector("#studentStatus");
+const studentNotice = document.querySelector("#studentNotice");
 const paperSelect = document.querySelector("#paperSelect");
 const quizForm = document.querySelector("#quizForm");
 const scorePill = document.querySelector("#scorePill");
 const progressText = document.querySelector("#progressText");
 const progressFill = document.querySelector("#progressFill");
 const resultPanel = document.querySelector("#resultPanel");
+const leaderboardList = document.querySelector("#leaderboardList");
+const clearLeaderboardBtn = document.querySelector("#clearLeaderboardBtn");
 const resetBtn = document.querySelector("#resetBtn");
 const gradeBtn = document.querySelector("#gradeBtn");
 const showWrongBtn = document.querySelector("#showWrongBtn");
@@ -160,6 +170,94 @@ function selectedAnswer(questionIndex) {
 
 function currentPaper() {
   return papers[state.paperIndex];
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function getStudent() {
+  return {
+    className: classInput.value.trim(),
+    seatNumber: seatInput.value.trim(),
+    studentName: nameInput.value.trim(),
+  };
+}
+
+function isStudentReady(student = getStudent()) {
+  return Boolean(student.className && student.seatNumber && student.studentName);
+}
+
+function updateStudentStatus() {
+  const ready = isStudentReady();
+  studentStatus.textContent = ready ? "已填寫" : "尚未填寫";
+  studentStatus.classList.toggle("is-ready", ready);
+  if (ready) {
+    studentNotice.hidden = true;
+    localStorage.setItem(studentKey, JSON.stringify(getStudent()));
+  }
+}
+
+function loadStudent() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(studentKey));
+    if (!saved) return;
+    classInput.value = saved.className || "";
+    seatInput.value = saved.seatNumber || "";
+    nameInput.value = saved.studentName || "";
+  } catch {
+    localStorage.removeItem(studentKey);
+  }
+  updateStudentStatus();
+}
+
+function loadLeaderboard() {
+  try {
+    return JSON.parse(localStorage.getItem(leaderboardKey)) || [];
+  } catch {
+    localStorage.removeItem(leaderboardKey);
+    return [];
+  }
+}
+
+function saveLeaderboard(records) {
+  localStorage.setItem(leaderboardKey, JSON.stringify(records));
+}
+
+function renderLeaderboard() {
+  const records = loadLeaderboard();
+  if (!records.length) {
+    leaderboardList.innerHTML = `<li class="empty-rank">尚無紀錄，完成一次批改後會出現在這裡。</li>`;
+    return;
+  }
+
+  leaderboardList.innerHTML = records.map((record, index) => `
+    <li>
+      <span class="rank-num">#${index + 1}</span>
+      <span class="rank-main">
+        <span class="rank-name">${escapeHtml(record.studentName)}</span>
+        <span class="rank-meta">${escapeHtml(record.className)} ${escapeHtml(record.seatNumber)} 號｜${escapeHtml(record.paperTitle)}｜${escapeHtml(record.finishedAt)}</span>
+      </span>
+      <span class="rank-score">${record.percent} 分</span>
+    </li>
+  `).join("");
+}
+
+function addLeaderboardRecord(record) {
+  const records = loadLeaderboard();
+  records.push(record);
+  records.sort((a, b) => {
+    if (b.percent !== a.percent) return b.percent - a.percent;
+    if (b.correct !== a.correct) return b.correct - a.correct;
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
+  saveLeaderboard(records.slice(0, 5));
+  renderLeaderboard();
 }
 
 function renderPaperOptions() {
@@ -212,7 +310,15 @@ function updateProgress() {
 }
 
 function gradeQuiz() {
+  const student = getStudent();
+  if (!isStudentReady(student)) {
+    studentNotice.hidden = false;
+    studentForm.reportValidity();
+    return;
+  }
+
   const paper = currentPaper();
+  const wasGraded = state.graded;
   let correct = 0;
   const wrong = [];
 
@@ -238,13 +344,31 @@ function gradeQuiz() {
 
   state.graded = true;
   const percent = Math.round((correct / paper.questions.length) * 100);
+  const createdAt = new Date();
   scorePill.textContent = `${percent} 分`;
   resultPanel.hidden = false;
   resultPanel.innerHTML = `
     <h2>${paper.title} 批改結果</h2>
+    <p>${escapeHtml(student.className)} ${escapeHtml(student.seatNumber)} 號 ${escapeHtml(student.studentName)}</p>
     <p>答對 ${correct} 題，共 ${paper.questions.length} 題，換算 ${percent} 分。</p>
     <p>${wrong.length ? `錯題：第 ${wrong.join("、")} 題` : "全部答對，這張很漂亮。"}</p>
   `;
+  if (!wasGraded) {
+    addLeaderboardRecord({
+      ...student,
+      paperTitle: paper.title,
+      correct,
+      total: paper.questions.length,
+      percent,
+      createdAt: createdAt.toISOString(),
+      finishedAt: createdAt.toLocaleString("zh-TW", {
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    });
+  }
   applyWrongFilter();
 }
 
@@ -274,17 +398,25 @@ paperSelect.addEventListener("change", () => {
   renderQuiz();
 });
 
+studentForm.addEventListener("input", updateStudentStatus);
 quizForm.addEventListener("change", updateProgress);
 resetBtn.addEventListener("click", resetQuiz);
 gradeBtn.addEventListener("click", gradeQuiz);
 showWrongBtn.addEventListener("click", () => {
   if (!state.graded) {
     gradeQuiz();
+    if (!state.graded) return;
   }
   state.wrongOnly = !state.wrongOnly;
   showWrongBtn.textContent = state.wrongOnly ? "顯示全部" : "只看錯題";
   applyWrongFilter();
 });
+clearLeaderboardBtn.addEventListener("click", () => {
+  localStorage.removeItem(leaderboardKey);
+  renderLeaderboard();
+});
 
+loadStudent();
 renderPaperOptions();
 renderQuiz();
+renderLeaderboard();

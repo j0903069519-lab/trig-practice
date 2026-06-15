@@ -71,13 +71,84 @@ main {
 }
 
 .controls,
+.student-panel,
 .progress-wrap,
 .actions,
 .result-panel,
+.leaderboard,
 .question {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 8px;
+}
+
+.student-panel {
+  padding: 12px;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.section-head h2 {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.status-chip {
+  flex: 0 0 auto;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: #fff7ed;
+  color: var(--warn);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.status-chip.is-ready {
+  background: #eef7f5;
+  color: var(--accent-strong);
+}
+
+.student-form {
+  display: grid;
+  gap: 10px;
+}
+
+.student-form label {
+  display: grid;
+  gap: 6px;
+}
+
+.student-form input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 700;
+}
+
+.student-form input:focus,
+select:focus,
+button:focus {
+  outline: 3px solid rgba(15, 118, 110, 0.18);
+  outline-offset: 2px;
+}
+
+.notice {
+  margin: 10px 0 0;
+  color: var(--bad);
+  font-size: 14px;
+  font-weight: 800;
 }
 
 .controls {
@@ -272,6 +343,67 @@ button:active {
   display: none;
 }
 
+.leaderboard {
+  margin-top: 12px;
+  padding: 14px;
+}
+
+.leaderboard .section-head {
+  margin-bottom: 8px;
+}
+
+.leaderboard-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 0;
+  list-style-position: inside;
+}
+
+.leaderboard-list li {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fafbfc;
+}
+
+.rank-num {
+  color: var(--accent-strong);
+  font-weight: 900;
+}
+
+.rank-main {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.rank-name {
+  font-weight: 900;
+  overflow-wrap: anywhere;
+}
+
+.rank-meta {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.rank-score {
+  color: var(--accent-strong);
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.empty-rank {
+  color: var(--muted);
+  font-weight: 700;
+}
+
 @media (min-width: 680px) {
   .topbar {
     padding: 18px 24px;
@@ -288,6 +420,10 @@ button:active {
   .controls {
     grid-template-columns: 140px 1fr 120px;
     align-items: center;
+  }
+
+  .student-form {
+    grid-template-columns: 1fr 120px 1fr;
   }
 
   .options {
