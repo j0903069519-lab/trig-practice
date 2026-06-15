@@ -13,4 +13,4 @@ python3 -m http.server 4174
 
 ## GitHub Pages
 
-這個 repo 已包含 GitHub Pages 部署 workflow。推送到 `main` 後，到 GitHub repo 的 `Settings > Pages`，將 `Build and deployment` 的 `Source` 設為 `GitHub Actions`。
+這個 repo 可直接用 GitHub Pages 發布。推送到 `main` 後，到 GitHub repo 的 `Settings > Pages`，將 `Build and deployment` 的 `Source` 設為 `Deploy from a branch`，branch 選 `main`，資料夾選 `/root`。
