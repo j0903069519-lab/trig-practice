@@ -1,6 +1,7 @@
 const labels = ["A", "B", "C", "D", "E"];
 const leaderboardKey = "trigPracticeLeaderboard";
 const studentKey = "trigPracticeStudent";
+const sharedLeaderboardUrl = "https://script.google.com/macros/s/AKfycbxm38oR1qSymPzIf3aEeSjA7WNgQTIYSu19TLfARSB7LG0zkVf4xI7SiUUDvfMKbpuC-A/exec";
 
 const papers = [
   {
@@ -229,14 +230,55 @@ function saveLeaderboard(records) {
   localStorage.setItem(leaderboardKey, JSON.stringify(records));
 }
 
-function renderLeaderboard() {
-  const records = loadLeaderboard();
-  if (!records.length) {
+function hasSharedLeaderboard() {
+  return Boolean(sharedLeaderboardUrl.trim());
+}
+
+function requestSharedLeaderboard(params = {}) {
+  return new Promise((resolve, reject) => {
+    const callbackName = `leaderboardCallback_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    const script = document.createElement("script");
+    const url = new URL(sharedLeaderboardUrl);
+    Object.entries({ ...params, callback: callbackName }).forEach(([key, value]) => {
+      url.searchParams.set(key, value);
+    });
+
+    window[callbackName] = (data) => {
+      delete window[callbackName];
+      script.remove();
+      resolve(data);
+    };
+    script.onerror = () => {
+      delete window[callbackName];
+      script.remove();
+      reject(new Error("shared leaderboard request failed"));
+    };
+    script.src = url.toString();
+    document.body.appendChild(script);
+  });
+}
+
+async function loadSharedLeaderboard() {
+  if (!hasSharedLeaderboard()) return loadLeaderboard();
+  try {
+    const data = await requestSharedLeaderboard({ action: "leaderboard" });
+    if (data && data.ok && Array.isArray(data.records)) {
+      return data.records;
+    }
+  } catch {
+    return loadLeaderboard();
+  }
+  return loadLeaderboard();
+}
+
+async function renderLeaderboard(records) {
+  const leaderboardRecords = records || await loadSharedLeaderboard();
+  if (!leaderboardRecords.length) {
     leaderboardList.innerHTML = `<li class="empty-rank">尚無紀錄，完成一次批改後會出現在這裡。</li>`;
     return;
   }
 
-  leaderboardList.innerHTML = records.map((record, index) => `
+  leaderboardList.innerHTML = leaderboardRecords.map((record, index) => `
     <li>
       <span class="rank-num">#${index + 1}</span>
       <span class="rank-main">
@@ -248,7 +290,19 @@ function renderLeaderboard() {
   `).join("");
 }
 
-function addLeaderboardRecord(record) {
+async function addLeaderboardRecord(record) {
+  if (hasSharedLeaderboard()) {
+    try {
+      const data = await requestSharedLeaderboard({ action: "submit", ...record });
+      if (data && data.ok && Array.isArray(data.records)) {
+        await renderLeaderboard(data.records);
+        return;
+      }
+    } catch {
+      // Keep a local backup when the shared leaderboard is temporarily unreachable.
+    }
+  }
+
   const records = loadLeaderboard();
   records.push(record);
   records.sort((a, b) => {
@@ -257,7 +311,11 @@ function addLeaderboardRecord(record) {
     return new Date(b.createdAt) - new Date(a.createdAt);
   });
   saveLeaderboard(records.slice(0, 5));
-  renderLeaderboard();
+  await renderLeaderboard(records.slice(0, 5));
+}
+
+function updateLeaderboardButton() {
+  clearLeaderboardBtn.textContent = hasSharedLeaderboard() ? "重新整理" : "清除紀錄";
 }
 
 function renderPaperOptions() {
@@ -411,12 +469,17 @@ showWrongBtn.addEventListener("click", () => {
   showWrongBtn.textContent = state.wrongOnly ? "顯示全部" : "只看錯題";
   applyWrongFilter();
 });
-clearLeaderboardBtn.addEventListener("click", () => {
+clearLeaderboardBtn.addEventListener("click", async () => {
+  if (hasSharedLeaderboard()) {
+    await renderLeaderboard();
+    return;
+  }
   localStorage.removeItem(leaderboardKey);
-  renderLeaderboard();
+  await renderLeaderboard([]);
 });
 
 loadStudent();
 renderPaperOptions();
 renderQuiz();
+updateLeaderboardButton();
 renderLeaderboard();
