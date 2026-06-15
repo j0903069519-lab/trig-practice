@@ -1,0 +1,296 @@
+:root {
+  color-scheme: light;
+  --ink: #18212f;
+  --muted: #667085;
+  --line: #d9e0ea;
+  --surface: #ffffff;
+  --page: #f6f7fb;
+  --accent: #0f766e;
+  --accent-strong: #115e59;
+  --good: #12805c;
+  --bad: #b42318;
+  --warn: #b54708;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", "Segoe UI", sans-serif;
+  background: var(--page);
+  color: var(--ink);
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.94);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(12px);
+}
+
+.eyebrow {
+  margin: 0 0 2px;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+h1 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.15;
+  letter-spacing: 0;
+}
+
+main {
+  width: min(920px, 100%);
+  margin: 0 auto;
+  padding: 14px 12px 32px;
+}
+
+.score-pill {
+  flex: 0 0 auto;
+  min-width: 92px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #eef7f5;
+  color: var(--accent-strong);
+  text-align: center;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.controls,
+.progress-wrap,
+.actions,
+.result-panel,
+.question {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  padding: 12px;
+}
+
+label {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+select,
+button {
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 700;
+}
+
+select {
+  width: 100%;
+  padding: 0 12px;
+}
+
+button {
+  padding: 0 14px;
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+.primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: white;
+}
+
+.progress-wrap {
+  margin-top: 10px;
+  padding: 12px;
+}
+
+.progress-top {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.progress-bar {
+  height: 10px;
+  margin-top: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e8edf3;
+}
+
+#progressFill {
+  width: 0;
+  height: 100%;
+  background: var(--accent);
+  transition: width 180ms ease;
+}
+
+.quiz {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.question {
+  padding: 14px;
+}
+
+.question.is-correct {
+  border-color: rgba(18, 128, 92, 0.45);
+  background: #f0faf6;
+}
+
+.question.is-wrong {
+  border-color: rgba(180, 35, 24, 0.45);
+  background: #fff4f2;
+}
+
+.q-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.q-num {
+  color: var(--accent-strong);
+  font-weight: 900;
+}
+
+.q-type {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #edf2f7;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.stem {
+  margin: 0 0 12px;
+  line-height: 1.55;
+  font-size: 16px;
+}
+
+.options {
+  display: grid;
+  gap: 8px;
+}
+
+.option {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 8px;
+  align-items: start;
+  min-height: 44px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+}
+
+.option input {
+  width: 20px;
+  height: 20px;
+  margin: 1px 0 0;
+  accent-color: var(--accent);
+}
+
+.option span {
+  line-height: 1.35;
+}
+
+.feedback {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.feedback.good {
+  color: var(--good);
+}
+
+.feedback.bad {
+  color: var(--bad);
+}
+
+.actions {
+  position: sticky;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 12px;
+}
+
+.result-panel {
+  margin-top: 12px;
+  padding: 14px;
+  line-height: 1.55;
+}
+
+.result-panel h2 {
+  margin: 0 0 6px;
+  font-size: 20px;
+}
+
+.result-panel p {
+  margin: 4px 0;
+}
+
+.hidden-by-filter {
+  display: none;
+}
+
+@media (min-width: 680px) {
+  .topbar {
+    padding: 18px 24px;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+
+  main {
+    padding: 20px 20px 40px;
+  }
+
+  .controls {
+    grid-template-columns: 140px 1fr 120px;
+    align-items: center;
+  }
+
+  .options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

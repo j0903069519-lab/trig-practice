@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>體育班三角函數練習</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">體育班數學</p>
+        <h1>三角函數練習</h1>
+      </div>
+      <div class="score-pill" id="scorePill">尚未批改</div>
+    </header>
+
+    <main>
+      <section class="controls" aria-label="練習設定">
+        <label for="paperSelect">選擇練習卷</label>
+        <select id="paperSelect"></select>
+        <button id="resetBtn" type="button">重新作答</button>
+      </section>
+
+      <section class="progress-wrap" aria-label="作答進度">
+        <div class="progress-top">
+          <span id="progressText">0 / 19 題</span>
+          <span id="paperMeta">每卷 19 題</span>
+        </div>
+        <div class="progress-bar">
+          <div id="progressFill"></div>
+        </div>
+      </section>
+
+      <form id="quizForm" class="quiz"></form>
+
+      <section class="actions">
+        <button id="gradeBtn" class="primary" type="button">送出批改</button>
+        <button id="showWrongBtn" type="button">只看錯題</button>
+      </section>
+
+      <section id="resultPanel" class="result-panel" hidden></section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
