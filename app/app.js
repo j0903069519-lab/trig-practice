@@ -20,8 +20,27 @@ const typeTitles = [
   "第 15 題：三角形面積",
   "第 16 題：餘弦定理",
   "第 17 題：外接圓半徑",
-  "第 18 題：正弦定理承上題",
+  "第 18 題：正弦定理求 sin A",
   "第 19 題：象限判斷多選",
+];
+const sinTableText = "sin10°=0.17，sin20°=0.34，sin30°=0.50，sin40°=0.64，sin50°=0.77，sin60°=0.87，sin70°=0.94，sin80°=0.98";
+const sinTable = {
+  10: "0.17",
+  20: "0.34",
+  30: "0.50",
+  40: "0.64",
+  50: "0.77",
+  60: "0.87",
+  70: "0.94",
+  80: "0.98",
+};
+const pythagoreanTriples = [
+  [3, 4, 5],
+  [5, 12, 13],
+  [8, 15, 17],
+  [7, 24, 25],
+  [20, 21, 29],
+  [9, 40, 41],
 ];
 
 const papers = [
@@ -163,6 +182,7 @@ const state = {
   mode: "paper",
   graded: false,
   typeGraded: false,
+  typeQuestions: [],
   paperScoreText: "尚未批改",
   typeScoreText: "題型練習",
   wrongOnly: false,
@@ -202,6 +222,327 @@ function answerKey(answer) {
   return answer.split("").sort().join("");
 }
 
+function pick(items) {
+  return items[Math.floor(Math.random() * items.length)];
+}
+
+function shuffle(items) {
+  const copy = [...items];
+  for (let index = copy.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [copy[index], copy[swapIndex]] = [copy[swapIndex], copy[index]];
+  }
+  return copy;
+}
+
+function unique(items) {
+  return [...new Set(items.map(String))];
+}
+
+function formatFraction(numerator, denominator) {
+  return `${numerator}/${denominator}`;
+}
+
+function makeSingleQuestion(stem, correct, distractors) {
+  const options = shuffle(unique([correct, ...distractors])).slice(0, 5);
+  if (!options.includes(correct)) {
+    options[0] = correct;
+  }
+  const answer = labels[options.indexOf(correct)];
+  return { question: [stem, options], answer };
+}
+
+function makeMultiQuestion(stem, correctOptions, distractors) {
+  const options = shuffle(unique([...correctOptions, ...distractors])).slice(0, 5);
+  correctOptions.forEach((correct, index) => {
+    if (!options.includes(correct)) {
+      options[index] = correct;
+    }
+  });
+  const answer = options
+    .map((option, index) => correctOptions.includes(option) ? labels[index] : "")
+    .join("");
+  return { question: [stem, options, true], answer };
+}
+
+function generateQuestion(typeIndex) {
+  const generators = [
+    generateRightTriangleCos,
+    generateCosToTan,
+    generateSinToCos,
+    generateTrianglePerimeter,
+    generateSymbolicCos,
+    generateIdentity,
+    generateSumFromProduct,
+    generateCoterminalAngle,
+    generatePointCos,
+    generatePointSin,
+    () => generateTableSin("下表為部分三角函數的估計值："),
+    generateTableCos,
+    () => generateTableSin("下表為部分三角函數的估計值："),
+    generatePolarToRectangular,
+    generateTriangleArea,
+    generateCosineLaw,
+    generateCircumradius,
+    generateLawOfSinesSinA,
+    generateQuadrantMulti,
+  ];
+  return generators[typeIndex]();
+}
+
+function generateRightTriangleCos() {
+  const [short, long, hypotenuse] = pick(pythagoreanTriples);
+  const scale = pick([1, 2]);
+  const bc = short * scale;
+  const ac = long * scale;
+  const ab = hypotenuse * scale;
+  return makeSingleQuestion(
+    `在三角形 ABC 中，已知 ∠C 為直角，AB=${ab}，BC=${bc}，AC=${ac}，下列何者為 cos A 之值？`,
+    formatFraction(ac, ab),
+    [formatFraction(bc, ab), formatFraction(ab, ac), formatFraction(bc, ac), formatFraction(ac, bc)]
+  );
+}
+
+function generateCosToTan() {
+  const [adjacent, opposite, hypotenuse] = pick(pythagoreanTriples);
+  return makeSingleQuestion(
+    `已知 0°<θ<90°，且 cos θ=${formatFraction(adjacent, hypotenuse)}，下列何者為 tan θ 之值？`,
+    formatFraction(opposite, adjacent),
+    [formatFraction(adjacent, opposite), formatFraction(adjacent, hypotenuse), formatFraction(opposite, hypotenuse), formatFraction(hypotenuse, opposite)]
+  );
+}
+
+function generateSinToCos() {
+  const data = pick([
+    ["1/2", "√3/2", ["1/2", "√2/2", "0", "1"]],
+    ["√2/2", "√2/2", ["1/2", "√3/2", "0", "1"]],
+    ["√3/2", "1/2", ["√3/2", "√2/2", "0", "1"]],
+    ["3/5", "4/5", ["3/5", "5/4", "4/3", "√3/2"]],
+    ["5/13", "12/13", ["5/12", "13/12", "5/13", "12/5"]],
+  ]);
+  return makeSingleQuestion(
+    `已知 0°<θ<90°，且 sin θ=${data[0]}，下列何者為 cos θ 之值？`,
+    data[1],
+    data[2]
+  );
+}
+
+function generateTrianglePerimeter() {
+  const [opposite, adjacent, hypotenuse] = pick(pythagoreanTriples);
+  const scale = pick([2, 3]);
+  const ab = hypotenuse * scale;
+  const perimeter = (opposite + adjacent + hypotenuse) * scale;
+  return makeSingleQuestion(
+    `已知三角形 ABC 中，C 為直角，sin A=${formatFraction(opposite, hypotenuse)} 且 AB=${ab}，下列何者為三角形的周長？`,
+    String(perimeter),
+    [perimeter - scale * 2, perimeter - scale, perimeter + scale, perimeter + scale * 3].map(String)
+  );
+}
+
+function generateSymbolicCos() {
+  const letter = pick(["a", "b", "c", "d", "e", "f", "x", "y"]);
+  return makeSingleQuestion(
+    `已知 sin θ=${letter} 且 θ 為銳角，下列何者為 cos θ？`,
+    `√(1-${letter}²)`,
+    [letter, `${letter}/√(1-${letter}²)`, `√(1-${letter}²)/${letter}`, "以上皆非"]
+  );
+}
+
+function generateIdentity() {
+  return makeSingleQuestion(
+    "下列何者為 (sin θ+cos θ)²+(sin θ-cos θ)² 之值？",
+    "2",
+    ["0", "1", "3", "4"]
+  );
+}
+
+function generateSumFromProduct() {
+  const product = pick(["0.1", "0.2", "0.3", "0.4", "0.45"]);
+  const correct = `√${(1 + 2 * Number(product)).toFixed(1)}`;
+  return makeSingleQuestion(
+    `已知 sin θ cos θ=${product}，且 0<θ<90°，下列何者為 sin θ+cos θ？`,
+    correct,
+    ["√0.8", "√1", "√1.2", "√1.4", "√1.6", "√1.8", "√1.9"].filter((option) => option !== correct)
+  );
+}
+
+function generateCoterminalAngle() {
+  const angle = pick([45, 60, 75, 120, 150, 210, 285, 315]);
+  const correct = pick([angle + 360, angle - 360, angle + 720]);
+  const distractors = [360 - angle, -angle, angle + 180, angle - 180, 720 - angle]
+    .filter((value) => Math.abs(value - angle) % 360 !== 0)
+    .map((value) => `${value}°`);
+  return makeSingleQuestion(
+    `下列何者為 ${angle}° 的同界角？`,
+    `${correct}°`,
+    distractors
+  );
+}
+
+function generatePointCos() {
+  const [xBase, yBase, radius] = pick(pythagoreanTriples);
+  const xSign = pick([1, -1]);
+  const ySign = pick([1, -1]);
+  const x = xBase * xSign;
+  const y = yBase * ySign;
+  return makeSingleQuestion(
+    `已知點 P(${x},${y}) 在標準位置角 θ 的終邊上，下列何者為 cos θ？`,
+    formatFraction(x, radius),
+    [formatFraction(y, radius), formatFraction(-x, radius), formatFraction(-y, radius), formatFraction(x, yBase)]
+  );
+}
+
+function generatePointSin() {
+  const [xBase, yBase, radius] = pick(pythagoreanTriples);
+  const xSign = pick([1, -1]);
+  const ySign = pick([1, -1]);
+  const x = xBase * xSign;
+  const y = yBase * ySign;
+  return makeSingleQuestion(
+    `已知點 P(${x},${y}) 在標準位置角 θ 的終邊上，下列何者為 sin θ？`,
+    formatFraction(y, radius),
+    [formatFraction(x, radius), formatFraction(-y, radius), formatFraction(-x, radius), formatFraction(y, xBase)]
+  );
+}
+
+function sinEstimate(angle) {
+  const normalized = ((angle % 360) + 360) % 360;
+  const reference = normalized <= 90 ? normalized : normalized <= 180 ? 180 - normalized : normalized <= 270 ? normalized - 180 : 360 - normalized;
+  const sign = normalized > 180 ? "-" : "";
+  return `${sign}${sinTable[reference]}`;
+}
+
+function cosEstimate(angle) {
+  const normalized = ((angle % 360) + 360) % 360;
+  const reference = normalized <= 90 ? normalized : normalized <= 180 ? 180 - normalized : normalized <= 270 ? normalized - 180 : 360 - normalized;
+  const sign = normalized > 90 && normalized < 270 ? "-" : "";
+  return `${sign}${sinTable[90 - reference]}`;
+}
+
+function generateTableSin(prefix) {
+  const angle = pick([120, 140, 150, 210, 220, 250, 300, 310, 320, 330, 340]);
+  const correct = sinEstimate(angle);
+  return makeSingleQuestion(
+    `${prefix}${sinTableText}。下列選項何者為 sin ${angle}° 估計至小數點第二位之值？`,
+    correct,
+    ["0.34", "-0.34", "0.50", "-0.50", "0.64", "-0.64", "0.77", "-0.77", "0.87", "-0.87", "0.94", "-0.94"].filter((option) => option !== correct)
+  );
+}
+
+function generateTableCos() {
+  const angle = pick([200, 290, 400, 470, 560, 610, 620, 650]);
+  const correct = cosEstimate(angle);
+  return makeSingleQuestion(
+    `下表為部分三角函數的估計值：${sinTableText}。下列選項何者為 cos ${angle}° 估計至小數點第二位之值？`,
+    correct,
+    ["0.17", "-0.17", "0.34", "-0.34", "0.64", "-0.64", "0.77", "-0.77", "0.94", "-0.94"].filter((option) => option !== correct)
+  );
+}
+
+function generatePolarToRectangular() {
+  const radius = pick([40, 50, 60, 70, 80]);
+  const angle = pick([30, 120, 150, 210, 220, 240, 300, 330]);
+  const radians = angle * Math.PI / 180;
+  const x = Math.round(radius * Math.cos(radians));
+  const y = Math.round(radius * Math.sin(radians));
+  return makeSingleQuestion(
+    `已知 P 點的極座標為 [${radius},${angle}°]，下列哪一個直角坐標最接近 P 點？`,
+    `(${x},${y})`,
+    [`(${-x},${y})`, `(${x},${-y})`, `(${y},${x})`, `(${-y},${-x})`]
+  );
+}
+
+function generateTriangleArea() {
+  let ab;
+  let bc;
+  let sinB;
+  let area;
+  do {
+    ab = pick([10, 12, 14, 16, 18, 20]);
+    bc = pick([8, 9, 10, 12, 15]);
+    sinB = pick([[1, 3], [2, 5], [3, 7], [1, 4], [1, 2]]);
+    area = ab * bc * sinB[0] / (2 * sinB[1]);
+  } while (!Number.isInteger(area));
+  return makeSingleQuestion(
+    `已知在三角形 ABC 中，AB=${ab}，BC=${bc}，sin B=${formatFraction(sinB[0], sinB[1])}，則三角形 ABC 的面積是多少？`,
+    String(area),
+    [area - 6, area - 3, area + 6, area + 12].map(String)
+  );
+}
+
+function generateCosineLaw() {
+  let ab;
+  let bc;
+  let cosB;
+  let value;
+  do {
+    ab = pick([10, 12, 14, 16, 18]);
+    bc = pick([6, 8, 9, 10, 12, 15]);
+    cosB = pick([[1, 5], [1, 4], [1, 3], [2, 5], [3, 5]]);
+    value = ab * ab + bc * bc - 2 * ab * bc * cosB[0] / cosB[1];
+  } while (!Number.isInteger(value));
+  return makeSingleQuestion(
+    `已知在三角形 ABC 中，AB=${ab}，BC=${bc}，cos B=${formatFraction(cosB[0], cosB[1])}，則 AC 的長度是多少？`,
+    `√${value}`,
+    [value - 20, value - 10, value + 10, value + 20].filter((item) => item > 0).map((item) => `√${item}`)
+  );
+}
+
+function generateCircumradius() {
+  const data = pick([
+    [10, 15, 1, 2],
+    [12, 18, 3, 5],
+    [16, 20, 4, 5],
+    [18, 24, 3, 4],
+    [20, 24, 5, 8],
+  ]);
+  const [ab, bc, sinNumerator, sinDenominator] = data;
+  const radius = ab * sinDenominator / (2 * sinNumerator);
+  return makeSingleQuestion(
+    `已知在三角形 ABC 中，AB=${ab}，BC=${bc}，sin C=${formatFraction(sinNumerator, sinDenominator)}，三角形 ABC 的外接圓半徑為何？`,
+    String(radius),
+    [radius - 4, radius - 2, radius + 2, radius + 6].filter((item) => item > 0).map(String)
+  );
+}
+
+function generateLawOfSinesSinA() {
+  const data = pick([
+    [10, 15, 1, 2],
+    [12, 18, 3, 5],
+    [16, 20, 4, 5],
+    [18, 24, 3, 4],
+    [20, 24, 5, 8],
+  ]);
+  const [ab, bc, sinNumerator, sinDenominator] = data;
+  const numerator = bc * sinNumerator;
+  const denominator = ab * sinDenominator;
+  const divisor = gcd(numerator, denominator);
+  const answer = formatFraction(numerator / divisor, denominator / divisor);
+  return makeSingleQuestion(
+    `已知在三角形 ABC 中，AB=${ab}，BC=${bc}，sin C=${formatFraction(sinNumerator, sinDenominator)}，下列何者為 sin A？`,
+    answer,
+    ["1/2", "2/3", "3/4", "4/5", "5/6", "1"].filter((option) => option !== answer)
+  );
+}
+
+function gcd(a, b) {
+  return b === 0 ? a : gcd(b, a % b);
+}
+
+function generateQuadrantMulti() {
+  const quadrant = pick([
+    ["第一象限", ["sin θ>0", "cos θ>0"], ["tan θ<0", "sin(-θ)>0", "cos(-θ)<0"]],
+    ["第二象限", ["sin θ>0", "tan θ<0"], ["cos θ>0", "sin(-θ)>0", "cos(-θ)<0"]],
+    ["第三象限", ["cos θ<0", "tan θ>0"], ["sin θ>0", "sin(-θ)<0", "cos(-θ)>0"]],
+    ["第四象限", ["cos θ>0", "tan θ<0"], ["sin θ>0", "sin(-θ)<0", "cos(-θ)<0"]],
+  ]);
+  return makeMultiQuestion(
+    `已知 θ 為${quadrant[0]}角，下列敘述哪些正確？`,
+    quadrant[1],
+    quadrant[2]
+  );
+}
+
 function selectedAnswer(questionIndex) {
   const inputs = [...quizForm.querySelectorAll(`[name="q${questionIndex}"]:checked`)];
   return inputs.map((input) => input.value).sort().join("");
@@ -217,11 +558,7 @@ function currentPaper() {
 }
 
 function currentTypeQuestions() {
-  return papers.map((paper) => ({
-    paperTitle: paper.title,
-    question: paper.questions[state.typeIndex],
-    answer: paper.answers[state.typeIndex],
-  }));
+  return state.typeQuestions;
 }
 
 function escapeHtml(value) {
@@ -429,6 +766,10 @@ function renderQuiz() {
 }
 
 function renderTypePractice() {
+  state.typeQuestions = Array.from({ length: 5 }, (_, index) => ({
+    paperTitle: `第 ${index + 1} 題`,
+    ...generateQuestion(state.typeIndex),
+  }));
   const typeQuestions = currentTypeQuestions();
   typePracticeForm.innerHTML = typeQuestions.map((item, index) => {
     const [stem, options, multiple] = item.question;
@@ -632,7 +973,7 @@ quizForm.addEventListener("change", updateProgress);
 typePracticeForm.addEventListener("change", updateTypeProgress);
 resetBtn.addEventListener("click", resetQuiz);
 gradeBtn.addEventListener("click", gradeQuiz);
-typeResetBtn.addEventListener("click", resetTypePractice);
+typeResetBtn.addEventListener("click", renderTypePractice);
 typeGradeBtn.addEventListener("click", gradeTypePractice);
 typeNewBtn.addEventListener("click", () => setMode("paper"));
 showWrongBtn.addEventListener("click", () => {
