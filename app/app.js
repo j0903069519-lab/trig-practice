@@ -2,6 +2,27 @@ const labels = ["A", "B", "C", "D", "E"];
 const leaderboardKey = "trigPracticeLeaderboard";
 const studentKey = "trigPracticeStudent";
 const sharedLeaderboardUrl = "https://script.google.com/macros/s/AKfycbxm38oR1qSymPzIf3aEeSjA7WNgQTIYSu19TLfARSB7LG0zkVf4xI7SiUUDvfMKbpuC-A/exec";
+const typeTitles = [
+  "第 1 題：直角三角形求 cos",
+  "第 2 題：已知 cos 求 tan",
+  "第 3 題：已知 sin 求 cos",
+  "第 4 題：直角三角形周長",
+  "第 5 題：sin 與 cos 關係",
+  "第 6 題：三角恆等式化簡",
+  "第 7 題：已知 sinθcosθ",
+  "第 8 題：同界角",
+  "第 9 題：終邊點求 cos",
+  "第 10 題：終邊點求 sin",
+  "第 11 題：查表估 sin",
+  "第 12 題：查表估 cos",
+  "第 13 題：查表估 sin",
+  "第 14 題：極座標轉直角坐標",
+  "第 15 題：三角形面積",
+  "第 16 題：餘弦定理",
+  "第 17 題：外接圓半徑",
+  "第 18 題：正弦定理承上題",
+  "第 19 題：象限判斷多選",
+];
 
 const papers = [
   {
@@ -138,7 +159,12 @@ const papers = [
 
 const state = {
   paperIndex: 0,
+  typeIndex: 0,
+  mode: "paper",
   graded: false,
+  typeGraded: false,
+  paperScoreText: "尚未批改",
+  typeScoreText: "題型練習",
   wrongOnly: false,
 };
 
@@ -148,17 +174,29 @@ const seatInput = document.querySelector("#seatInput");
 const nameInput = document.querySelector("#nameInput");
 const studentStatus = document.querySelector("#studentStatus");
 const studentNotice = document.querySelector("#studentNotice");
+const paperView = document.querySelector("#paperView");
+const typePracticeView = document.querySelector("#typePracticeView");
+const paperModeBtn = document.querySelector("#paperModeBtn");
+const typeModeBtn = document.querySelector("#typeModeBtn");
 const paperSelect = document.querySelector("#paperSelect");
+const typeSelect = document.querySelector("#typeSelect");
 const quizForm = document.querySelector("#quizForm");
+const typePracticeForm = document.querySelector("#typePracticeForm");
 const scorePill = document.querySelector("#scorePill");
 const progressText = document.querySelector("#progressText");
 const progressFill = document.querySelector("#progressFill");
+const typeProgressText = document.querySelector("#typeProgressText");
+const typeProgressFill = document.querySelector("#typeProgressFill");
 const resultPanel = document.querySelector("#resultPanel");
+const typeResultPanel = document.querySelector("#typeResultPanel");
 const leaderboardList = document.querySelector("#leaderboardList");
 const clearLeaderboardBtn = document.querySelector("#clearLeaderboardBtn");
 const resetBtn = document.querySelector("#resetBtn");
 const gradeBtn = document.querySelector("#gradeBtn");
 const showWrongBtn = document.querySelector("#showWrongBtn");
+const typeResetBtn = document.querySelector("#typeResetBtn");
+const typeGradeBtn = document.querySelector("#typeGradeBtn");
+const typeNewBtn = document.querySelector("#typeNewBtn");
 
 function answerKey(answer) {
   return answer.split("").sort().join("");
@@ -169,8 +207,21 @@ function selectedAnswer(questionIndex) {
   return inputs.map((input) => input.value).sort().join("");
 }
 
+function selectedTypeAnswer(questionIndex) {
+  const inputs = [...typePracticeForm.querySelectorAll(`[name="t${questionIndex}"]:checked`)];
+  return inputs.map((input) => input.value).sort().join("");
+}
+
 function currentPaper() {
   return papers[state.paperIndex];
+}
+
+function currentTypeQuestions() {
+  return papers.map((paper) => ({
+    paperTitle: paper.title,
+    question: paper.questions[state.typeIndex],
+    answer: paper.answers[state.typeIndex],
+  }));
 }
 
 function escapeHtml(value) {
@@ -318,9 +369,25 @@ function updateLeaderboardButton() {
   clearLeaderboardBtn.textContent = hasSharedLeaderboard() ? "重新整理" : "清除紀錄";
 }
 
+function setMode(mode) {
+  state.mode = mode;
+  const isTypePractice = mode === "type";
+  paperView.hidden = isTypePractice;
+  typePracticeView.hidden = !isTypePractice;
+  paperModeBtn.classList.toggle("is-active", !isTypePractice);
+  typeModeBtn.classList.toggle("is-active", isTypePractice);
+  scorePill.textContent = isTypePractice ? state.typeScoreText : state.paperScoreText;
+}
+
 function renderPaperOptions() {
   paperSelect.innerHTML = papers
     .map((paper, index) => `<option value="${index}">${paper.title}</option>`)
+    .join("");
+}
+
+function renderTypeOptions() {
+  typeSelect.innerHTML = typeTitles
+    .map((title, index) => `<option value="${index}">${title}</option>`)
     .join("");
 }
 
@@ -356,8 +423,46 @@ function renderQuiz() {
   state.wrongOnly = false;
   showWrongBtn.textContent = "只看錯題";
   resultPanel.hidden = true;
-  scorePill.textContent = "尚未批改";
+  state.paperScoreText = "尚未批改";
+  scorePill.textContent = state.paperScoreText;
   updateProgress();
+}
+
+function renderTypePractice() {
+  const typeQuestions = currentTypeQuestions();
+  typePracticeForm.innerHTML = typeQuestions.map((item, index) => {
+    const [stem, options, multiple] = item.question;
+    const type = multiple ? "多選" : "單選";
+    const inputType = multiple ? "checkbox" : "radio";
+    const optionHtml = options.map((option, optionIndex) => {
+      const label = labels[optionIndex];
+      return `
+        <label class="option">
+          <input type="${inputType}" name="t${index}" value="${label}">
+          <span>(${label}) ${option}</span>
+        </label>
+      `;
+    }).join("");
+
+    return `
+      <article class="question" data-type-question="${index}">
+        <div class="q-head">
+          <span class="q-num">${item.paperTitle} 變式</span>
+          <span class="q-type">${type}</span>
+        </div>
+        <p class="stem">${stem}</p>
+        <div class="options">${optionHtml}</div>
+        <div class="feedback" hidden></div>
+      </article>
+    `;
+  }).join("");
+  state.typeGraded = false;
+  typeResultPanel.hidden = true;
+  state.typeScoreText = "題型練習";
+  if (state.mode === "type") {
+    scorePill.textContent = state.typeScoreText;
+  }
+  updateTypeProgress();
 }
 
 function updateProgress() {
@@ -365,6 +470,13 @@ function updateProgress() {
   const answered = paper.questions.filter((_, index) => selectedAnswer(index)).length;
   progressText.textContent = `${answered} / ${paper.questions.length} 題`;
   progressFill.style.width = `${Math.round((answered / paper.questions.length) * 100)}%`;
+}
+
+function updateTypeProgress() {
+  const typeQuestions = currentTypeQuestions();
+  const answered = typeQuestions.filter((_, index) => selectedTypeAnswer(index)).length;
+  typeProgressText.textContent = `${answered} / ${typeQuestions.length} 題`;
+  typeProgressFill.style.width = `${Math.round((answered / typeQuestions.length) * 100)}%`;
 }
 
 function gradeQuiz() {
@@ -403,7 +515,8 @@ function gradeQuiz() {
   state.graded = true;
   const percent = Math.round((correct / paper.questions.length) * 100);
   const createdAt = new Date();
-  scorePill.textContent = `${percent} 分`;
+  state.paperScoreText = `${percent} 分`;
+  scorePill.textContent = state.paperScoreText;
   resultPanel.hidden = false;
   resultPanel.innerHTML = `
     <h2>${paper.title} 批改結果</h2>
@@ -440,8 +553,59 @@ function resetQuiz() {
   state.wrongOnly = false;
   showWrongBtn.textContent = "只看錯題";
   resultPanel.hidden = true;
-  scorePill.textContent = "尚未批改";
+  state.paperScoreText = "尚未批改";
+  scorePill.textContent = state.paperScoreText;
   updateProgress();
+}
+
+function gradeTypePractice() {
+  const typeQuestions = currentTypeQuestions();
+  let correct = 0;
+  const wrong = [];
+
+  typeQuestions.forEach((item, index) => {
+    const expected = answerKey(item.answer);
+    const selected = selectedTypeAnswer(index);
+    const article = typePracticeForm.querySelector(`[data-type-question="${index}"]`);
+    const feedback = article.querySelector(".feedback");
+    const isCorrect = selected === expected;
+    article.classList.toggle("is-correct", isCorrect);
+    article.classList.toggle("is-wrong", !isCorrect);
+    feedback.hidden = false;
+    feedback.className = `feedback ${isCorrect ? "good" : "bad"}`;
+    feedback.textContent = isCorrect
+      ? `答對了。正解：${item.answer}`
+      : `再看一次。你的答案：${selected || "未作答"}；正解：${item.answer}`;
+    if (isCorrect) {
+      correct += 1;
+    } else {
+      wrong.push(index + 1);
+    }
+  });
+
+  state.typeGraded = true;
+  const percent = Math.round((correct / typeQuestions.length) * 100);
+  state.typeScoreText = `${percent} 分`;
+  scorePill.textContent = state.typeScoreText;
+  typeResultPanel.hidden = false;
+  typeResultPanel.innerHTML = `
+    <h2>${escapeHtml(typeTitles[state.typeIndex])} 結果</h2>
+    <p>答對 ${correct} 題，共 ${typeQuestions.length} 題，換算 ${percent} 分。</p>
+    <p>${wrong.length ? `需要再看：第 ${wrong.join("、")} 題` : "這個題型已經很穩。"}</p>
+  `;
+}
+
+function resetTypePractice() {
+  typePracticeForm.reset();
+  [...typePracticeForm.querySelectorAll(".question")].forEach((article) => {
+    article.classList.remove("is-correct", "is-wrong");
+    article.querySelector(".feedback").hidden = true;
+  });
+  state.typeGraded = false;
+  typeResultPanel.hidden = true;
+  state.typeScoreText = "題型練習";
+  scorePill.textContent = state.typeScoreText;
+  updateTypeProgress();
 }
 
 function applyWrongFilter() {
@@ -456,10 +620,21 @@ paperSelect.addEventListener("change", () => {
   renderQuiz();
 });
 
+typeSelect.addEventListener("change", () => {
+  state.typeIndex = Number(typeSelect.value);
+  renderTypePractice();
+});
+
+paperModeBtn.addEventListener("click", () => setMode("paper"));
+typeModeBtn.addEventListener("click", () => setMode("type"));
 studentForm.addEventListener("input", updateStudentStatus);
 quizForm.addEventListener("change", updateProgress);
+typePracticeForm.addEventListener("change", updateTypeProgress);
 resetBtn.addEventListener("click", resetQuiz);
 gradeBtn.addEventListener("click", gradeQuiz);
+typeResetBtn.addEventListener("click", resetTypePractice);
+typeGradeBtn.addEventListener("click", gradeTypePractice);
+typeNewBtn.addEventListener("click", () => setMode("paper"));
 showWrongBtn.addEventListener("click", () => {
   if (!state.graded) {
     gradeQuiz();
@@ -480,6 +655,8 @@ clearLeaderboardBtn.addEventListener("click", async () => {
 
 loadStudent();
 renderPaperOptions();
+renderTypeOptions();
 renderQuiz();
+renderTypePractice();
 updateLeaderboardButton();
 renderLeaderboard();

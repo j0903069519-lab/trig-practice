@@ -41,41 +41,75 @@
         <p id="studentNotice" class="notice" hidden>請先填寫班級、座號、姓名，再送出批改。</p>
       </section>
 
-      <section class="controls" aria-label="練習設定">
-        <label for="paperSelect">選擇練習卷</label>
-        <select id="paperSelect"></select>
-        <button id="resetBtn" type="button">重新作答</button>
+      <section class="mode-tabs" aria-label="練習模式">
+        <button id="paperModeBtn" class="tab-btn is-active" type="button">完整考卷</button>
+        <button id="typeModeBtn" class="tab-btn" type="button">題型練習</button>
       </section>
 
-      <section class="progress-wrap" aria-label="作答進度">
-        <div class="progress-top">
-          <span id="progressText">0 / 19 題</span>
-          <span id="paperMeta">每卷 19 題</span>
-        </div>
-        <div class="progress-bar">
-          <div id="progressFill"></div>
-        </div>
-      </section>
+      <div id="paperView">
+        <section class="controls" aria-label="練習設定">
+          <label for="paperSelect">選擇練習卷</label>
+          <select id="paperSelect"></select>
+          <button id="resetBtn" type="button">重新作答</button>
+        </section>
 
-      <form id="quizForm" class="quiz"></form>
-
-      <section class="actions">
-        <button id="gradeBtn" class="primary" type="button">送出批改</button>
-        <button id="showWrongBtn" type="button">只看錯題</button>
-      </section>
-
-      <section id="resultPanel" class="result-panel" hidden></section>
-
-      <section class="leaderboard" aria-label="排行榜">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">前五高分</p>
-            <h2>排行榜</h2>
+        <section class="progress-wrap" aria-label="作答進度">
+          <div class="progress-top">
+            <span id="progressText">0 / 19 題</span>
+            <span id="paperMeta">每卷 19 題</span>
           </div>
-          <button id="clearLeaderboardBtn" type="button">清除紀錄</button>
-        </div>
-        <ol id="leaderboardList" class="leaderboard-list"></ol>
-      </section>
+          <div class="progress-bar">
+            <div id="progressFill"></div>
+          </div>
+        </section>
+
+        <form id="quizForm" class="quiz"></form>
+
+        <section class="actions">
+          <button id="gradeBtn" class="primary" type="button">送出批改</button>
+          <button id="showWrongBtn" type="button">只看錯題</button>
+        </section>
+
+        <section id="resultPanel" class="result-panel" hidden></section>
+
+        <section class="leaderboard" aria-label="排行榜">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">前五高分</p>
+              <h2>排行榜</h2>
+            </div>
+            <button id="clearLeaderboardBtn" type="button">清除紀錄</button>
+          </div>
+          <ol id="leaderboardList" class="leaderboard-list"></ol>
+        </section>
+      </div>
+
+      <div id="typePracticeView" hidden>
+        <section class="controls type-controls" aria-label="題型練習設定">
+          <label for="typeSelect">選擇題型</label>
+          <select id="typeSelect"></select>
+          <button id="typeResetBtn" type="button">重新作答</button>
+        </section>
+
+        <section class="progress-wrap" aria-label="題型練習進度">
+          <div class="progress-top">
+            <span id="typeProgressText">0 / 5 題</span>
+            <span id="typeMeta">同題型 5 題</span>
+          </div>
+          <div class="progress-bar">
+            <div id="typeProgressFill"></div>
+          </div>
+        </section>
+
+        <form id="typePracticeForm" class="quiz"></form>
+
+        <section class="actions">
+          <button id="typeGradeBtn" class="primary" type="button">批改題型練習</button>
+          <button id="typeNewBtn" type="button">回完整卷</button>
+        </section>
+
+        <section id="typeResultPanel" class="result-panel" hidden></section>
+      </div>
     </main>
 
     <script src="app.js"></script>
