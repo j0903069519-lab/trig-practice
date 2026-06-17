@@ -40,6 +40,7 @@ function doGet(e) {
   if (action === "studentRecords") {
     return output({
       ok: true,
+      scope: "studentRecords",
       records: getStudentRecords(params.className, params.seatNumber),
     }, params.callback);
   }

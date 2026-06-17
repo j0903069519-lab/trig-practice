@@ -1000,7 +1000,7 @@ async function queryStudentRecords() {
 
   try {
     const data = await requestStudentRecords(className, seatNumber);
-    if (!data || !data.ok || !Array.isArray(data.records)) {
+    if (!data || !data.ok || data.scope !== "studentRecords" || !Array.isArray(data.records)) {
       throw new Error("invalid student records response");
     }
     renderStudentRecords(data.records);
@@ -1026,7 +1026,7 @@ async function requestStudentRecords(className, seatNumber) {
     return normalizeText(record.className) === normalizeText(className)
       && splitSeatNumbers(record.seatNumber).includes(normalizeSeatNumber(seatNumber));
   });
-  return { ok: true, records };
+  return { ok: true, scope: "studentRecords", records };
 }
 
 function renderStudentRecords(records) {
