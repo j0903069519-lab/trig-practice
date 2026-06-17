@@ -37,6 +37,13 @@ function doGet(e) {
     }, params.callback);
   }
 
+  if (action === "studentRecords") {
+    return output({
+      ok: true,
+      records: getStudentRecords(params.className, params.seatNumber),
+    }, params.callback);
+  }
+
   return output({
     ok: true,
     records: getTopRecordsByPaper(),
@@ -104,6 +111,19 @@ function getAllRecords() {
     .map(rowToRecord)
     .filter((record) => record.studentName && Number.isFinite(record.percent))
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+}
+
+function getStudentRecords(className, seatNumber) {
+  const targetClass = clean(className);
+  const targetSeat = normalizeSeatNumber(seatNumber);
+  if (!targetClass || !targetSeat) return [];
+
+  return getAllRecords()
+    .filter((record) => {
+      return clean(record.className) === targetClass
+        && splitSeatNumbers(record.seatNumber).includes(targetSeat);
+    })
+    .slice(0, 30);
 }
 
 function getRecordsSummary() {

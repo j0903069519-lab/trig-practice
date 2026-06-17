@@ -324,6 +324,9 @@ const seatInput = document.querySelector("#seatInput");
 const nameInput = document.querySelector("#nameInput");
 const studentStatus = document.querySelector("#studentStatus");
 const studentNotice = document.querySelector("#studentNotice");
+const queryRecordsBtn = document.querySelector("#queryRecordsBtn");
+const queryRecordsStatus = document.querySelector("#queryRecordsStatus");
+const studentRecordsPanel = document.querySelector("#studentRecordsPanel");
 const paperView = document.querySelector("#paperView");
 const typePracticeView = document.querySelector("#typePracticeView");
 const paperModeBtn = document.querySelector("#paperModeBtn");
@@ -978,6 +981,103 @@ function groupLeaderboardByPaper(records) {
     }));
 }
 
+async function queryStudentRecords() {
+  const className = classInput.value.trim();
+  const seatNumber = seatInput.value.trim();
+
+  studentRecordsPanel.hidden = true;
+  studentRecordsPanel.innerHTML = "";
+  queryRecordsStatus.classList.remove("is-error");
+
+  if (!className || !seatNumber) {
+    queryRecordsStatus.textContent = "請先填班級與座號";
+    queryRecordsStatus.classList.add("is-error");
+    return;
+  }
+
+  queryRecordsBtn.disabled = true;
+  queryRecordsStatus.textContent = "查詢中...";
+
+  try {
+    const data = await requestStudentRecords(className, seatNumber);
+    if (!data || !data.ok || !Array.isArray(data.records)) {
+      throw new Error("invalid student records response");
+    }
+    renderStudentRecords(data.records);
+    queryRecordsStatus.textContent = data.records.length ? `找到 ${data.records.length} 筆` : "沒有紀錄";
+  } catch {
+    queryRecordsStatus.textContent = "查詢失敗，稍後再試";
+    queryRecordsStatus.classList.add("is-error");
+  } finally {
+    queryRecordsBtn.disabled = false;
+  }
+}
+
+async function requestStudentRecords(className, seatNumber) {
+  if (hasSharedLeaderboard()) {
+    return requestSharedLeaderboard({
+      action: "studentRecords",
+      className,
+      seatNumber,
+    });
+  }
+
+  const records = loadLeaderboard().filter((record) => {
+    return normalizeText(record.className) === normalizeText(className)
+      && splitSeatNumbers(record.seatNumber).includes(normalizeSeatNumber(seatNumber));
+  });
+  return { ok: true, records };
+}
+
+function renderStudentRecords(records) {
+  studentRecordsPanel.hidden = false;
+  if (!records.length) {
+    studentRecordsPanel.innerHTML = `<p>查不到這個班級座號的完整考卷紀錄。</p>`;
+    return;
+  }
+
+  studentRecordsPanel.innerHTML = `
+    <ul class="student-records-list">
+      ${records.map((record) => `
+        <li>
+          <span class="record-main">
+            <span class="record-title">${escapeHtml(record.paperTitle || "未指定考卷")}</span>
+            <span class="record-meta">${escapeHtml(record.finishedAt || record.createdAt || "")}｜${escapeHtml(record.studentName || "")}</span>
+          </span>
+          <span class="record-score">${Number(record.percent) || 0} 分</span>
+        </li>
+      `).join("")}
+    </ul>
+  `;
+}
+
+function splitSeatNumbers(value) {
+  const text = String(value || "").trim();
+  if (!text) return [];
+
+  const separated = text
+    .replace(/[,，、＋+&]/g, " ")
+    .split(/\s+/)
+    .filter(Boolean);
+  if (separated.length > 1) return separated.map(normalizeSeatNumber);
+
+  const digits = text.replace(/\D/g, "");
+  if (digits.length === 4) {
+    return [digits.slice(0, 2), digits.slice(2, 4)].map(normalizeSeatNumber);
+  }
+  return [normalizeSeatNumber(text)];
+}
+
+function normalizeSeatNumber(value) {
+  const digits = String(value || "").replace(/\D/g, "");
+  if (!digits) return String(value || "").trim();
+  return String(Number(digits));
+}
+
+function normalizeText(value) {
+  return String(value || "").trim();
+}
+
 function paperSortValue(paperTitle) {
   const order = ["練習卷 A", "練習卷 B", "練習卷 C", "練習卷 D", "練習卷 E", "練習卷 F", "練習卷 G", "練習卷 H", "練習卷 I", "練習卷 J"];
   const index = order.indexOf(String(paperTitle || ""));
@@ -1303,6 +1403,7 @@ gradeBtn.addEventListener("click", gradeQuiz);
 typeResetBtn.addEventListener("click", renderTypePractice);
 typeGradeBtn.addEventListener("click", gradeTypePractice);
 typeNewBtn.addEventListener("click", () => setMode("paper"));
+queryRecordsBtn.addEventListener("click", queryStudentRecords);
 showWrongBtn.addEventListener("click", () => {
   if (!state.graded) {
     gradeQuiz();

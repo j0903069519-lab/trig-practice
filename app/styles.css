@@ -145,6 +145,84 @@ button:focus {
   outline-offset: 2px;
 }
 
+.student-records {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.student-records-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.query-status {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.query-status.is-error {
+  color: var(--bad);
+}
+
+.student-records-panel {
+  display: grid;
+  gap: 8px;
+}
+
+.student-records-panel p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.student-records-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.student-records-list li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fafbfc;
+}
+
+.record-main {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.record-title {
+  font-weight: 900;
+}
+
+.record-meta {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.record-score {
+  color: var(--accent-strong);
+  font-weight: 900;
+}
+
 .notice {
   margin: 10px 0 0;
   color: var(--bad);
