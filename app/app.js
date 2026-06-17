@@ -570,6 +570,149 @@ function escapeHtml(value) {
     .replace(/'/g, "&#039;");
 }
 
+function answerLabelText(question, answer) {
+  const [, options] = question;
+  return answer
+    .split("")
+    .map((label) => {
+      const option = options[labels.indexOf(label)];
+      return `(${label}) ${option}`;
+    })
+    .join("、");
+}
+
+function explanationSteps(index) {
+  const steps = [
+    [
+      "先找直角。對著直角的邊是斜邊，本題斜邊是 AB。",
+      "要求 cos A，要站在角 A 的位置看三角形：靠著角 A 的直角邊是鄰邊，另一條直角邊是對邊。",
+      "公式是 cos A = 鄰邊 / 斜邊，所以把 AC 放分子、AB 放分母。",
+      "最後和選項比對，選出相同的分數。",
+    ],
+    [
+      "先把 cos θ 看成 鄰邊 / 斜邊。題目給的分子是鄰邊，分母是斜邊。",
+      "用畢氏定理找對邊：對邊² = 斜邊² - 鄰邊²。",
+      "找到對邊後，再用 tan θ = 對邊 / 鄰邊。",
+      "θ 是銳角，所以邊長和三角函數值都取正。",
+    ],
+    [
+      "先記住基本公式：sin²θ + cos²θ = 1。",
+      "把題目給的 sin θ 代進去，得到 cos²θ = 1 - sin²θ。",
+      "再開根號得到 cos θ。",
+      "因為 θ 是銳角，cos θ 是正的，所以不用加負號。",
+    ],
+    [
+      "sin A = 對邊 / 斜邊。題目給 sin A 和斜邊 AB，可以先算出對邊。",
+      "有了對邊和斜邊後，用畢氏定理算另一條直角邊。",
+      "三角形周長就是三邊相加：對邊 + 鄰邊 + 斜邊。",
+      "這類題目最容易錯在把 sin 的對邊和鄰邊看反。",
+    ],
+    [
+      "使用公式 sin²θ + cos²θ = 1。",
+      "已知 sin θ 是題目給的字母，所以 cos²θ = 1 - 那個字母²。",
+      "開根號得到 cos θ = √(1 - 字母²)。",
+      "題目說 θ 是銳角，所以 cos θ 要取正值。",
+    ],
+    [
+      "可以先把 sin θ 當成 a，cos θ 當成 b。",
+      "套用公式：(a+b)² + (a-b)² = 2a² + 2b²。",
+      "所以原式 = 2sin²θ + 2cos²θ = 2(sin²θ + cos²θ)。",
+      "因為 sin²θ + cos²θ = 1，所以最後答案是 2。",
+    ],
+    [
+      "要求 sin θ + cos θ，可以先把它平方。",
+      "(sin θ + cos θ)² = sin²θ + 2sinθcosθ + cos²θ。",
+      "sin²θ + cos²θ = 1，所以變成 1 + 2sinθcosθ。",
+      "把題目給的 sinθcosθ 代入後開根號。θ 是銳角，所以取正根。",
+    ],
+    [
+      "同界角的意思是兩個角最後停在同一條終邊上。",
+      "判斷方法是用 選項角度 - 題目角度。",
+      "如果差是 360° 的倍數，例如 360°、-360°、720°、-720°，就是同界角。",
+      "不是只看角度正負，而是看相差多少度。",
+    ],
+    [
+      "點 P(x,y) 在終邊上時，先算 r = √(x² + y²)。",
+      "cos θ 的公式是 x / r，也就是 x 坐標除以半徑。",
+      "如果 x 是負的，cos θ 就是負的；如果 x 是正的，cos θ 就是正的。",
+      "這題不要拿 y 去算 cos，y 是給 sin 用的。",
+    ],
+    [
+      "點 P(x,y) 在終邊上時，先算 r = √(x² + y²)。",
+      "sin θ 的公式是 y / r，也就是 y 坐標除以半徑。",
+      "如果 y 是負的，sin θ 就是負的；如果 y 是正的，sin θ 就是正的。",
+      "這題不要拿 x 去算 sin，x 是給 cos 用的。",
+    ],
+    [
+      "先把角度放到 0° 到 360° 之間，再判斷它在哪一象限。",
+      "接著找參考角，也就是它離 x 軸最近的銳角。",
+      "sin 在第一、第二象限是正；第三、第四象限是負。",
+      "最後查表找參考角的 sin 值，再補上正負號。",
+    ],
+    [
+      "先把角度減掉或加上 360°，化成比較容易看的同界角。",
+      "再判斷象限：cos 在第一、第四象限是正；第二、第三象限是負。",
+      "查表是 sin 表，所以可用 cos θ = sin(90° - 參考角) 來換。",
+      "最後把查到的數值加上正負號。",
+    ],
+    [
+      "做法和前面的 sin 查表題一樣。",
+      "先判斷象限，再找參考角。",
+      "sin 在第一、第二象限為正，在第三、第四象限為負。",
+      "查表得到參考角的數值後，依象限補正負號。",
+    ],
+    [
+      "極座標 [r,θ] 轉直角坐標，要用 x = r cos θ，y = r sin θ。",
+      "先看 θ 在哪個象限，決定 x 和 y 的正負。",
+      "再用特殊角或近似值算出 x、y。",
+      "選項通常會放正負號相反或 x、y 對調的答案，要特別小心。",
+    ],
+    [
+      "題目給兩邊和夾角的 sin，可以用面積公式。",
+      "公式是 面積 = 1/2 × 兩邊 × sin 夾角。",
+      "本題角 B 夾在 AB 和 BC 之間，所以用 1/2 × AB × BC × sin B。",
+      "先乘完再約分，會比較不容易算錯。",
+    ],
+    [
+      "看到兩邊和夾角的 cos，要想到餘弦定理。",
+      "角 B 夾在 AB 和 BC 中間，所以要求對面的 AC。",
+      "公式是 AC² = AB² + BC² - 2 × AB × BC × cos B。",
+      "算出 AC² 後，答案通常寫成 √某數。",
+    ],
+    [
+      "使用正弦定理的外接圓版本：邊長 / 對角的 sin = 2R。",
+      "AB 這條邊對到角 C，所以 AB / sin C = 2R。",
+      "要求 R，就把結果再除以 2，也就是 R = AB / (2sin C)。",
+      "代入分數時可以先把除以分數改成乘倒數。",
+    ],
+    [
+      "這題用正弦定理比較快。",
+      "AB 對到角 C，BC 對到角 A，所以 AB / sin C = BC / sin A。",
+      "交叉相乘整理：sin A = BC × sin C / AB。",
+      "最後把分數約分到最簡。",
+    ],
+    [
+      "先背象限正負：第一象限 sin、cos、tan 都正。",
+      "第二象限 sin 正，cos 負，tan 負；第三象限 sin 負，cos 負，tan 正；第四象限 sin 負，cos 正，tan 負。",
+      "遇到負角時要記得：sin(-θ) = -sinθ，cos(-θ) = cosθ，tan(-θ) = -tanθ。",
+      "多選題要一個選項一個選項判斷，不要只選第一個看起來對的。",
+    ],
+  ];
+  return steps[index] || ["先判斷題型，再套用對應公式，最後和選項比對。"];
+}
+
+function explanationHtml(index, question, answer) {
+  const correctText = answerLabelText(question, answer);
+  const steps = explanationSteps(index)
+    .map((step) => `<li>${escapeHtml(step)}</li>`)
+    .join("");
+  return `
+    <h3>詳解算法</h3>
+    <p>正確答案：${escapeHtml(correctText)}</p>
+    <ol>${steps}</ol>
+  `;
+}
+
 function getStudent() {
   return {
     className: classInput.value.trim(),
@@ -753,6 +896,8 @@ function renderQuiz() {
         <p class="stem">${stem}</p>
         <div class="options">${optionHtml}</div>
         <div class="feedback" hidden></div>
+        <button class="explanation-toggle" type="button" data-explanation="${index}" hidden>看詳解</button>
+        <div class="explanation-panel" hidden></div>
       </article>
     `;
   }).join("");
@@ -838,6 +983,8 @@ function gradeQuiz() {
     const selected = selectedAnswer(index);
     const article = quizForm.querySelector(`[data-question="${index}"]`);
     const feedback = article.querySelector(".feedback");
+    const explanationButton = article.querySelector(".explanation-toggle");
+    const explanationPanel = article.querySelector(".explanation-panel");
     const isCorrect = selected === expected;
     article.classList.toggle("is-correct", isCorrect);
     article.classList.toggle("is-wrong", !isCorrect);
@@ -846,6 +993,11 @@ function gradeQuiz() {
     feedback.textContent = isCorrect
       ? `答對了。正解：${paper.answers[index]}`
       : `再看一次。你的答案：${selected || "未作答"}；正解：${paper.answers[index]}`;
+    explanationButton.hidden = false;
+    explanationButton.textContent = "看詳解";
+    explanationButton.setAttribute("aria-expanded", "false");
+    explanationPanel.hidden = true;
+    explanationPanel.innerHTML = explanationHtml(index, question, paper.answers[index]);
     if (isCorrect) {
       correct += 1;
     } else {
@@ -889,6 +1041,8 @@ function resetQuiz() {
   [...quizForm.querySelectorAll(".question")].forEach((article) => {
     article.classList.remove("is-correct", "is-wrong", "hidden-by-filter");
     article.querySelector(".feedback").hidden = true;
+    article.querySelector(".explanation-toggle").hidden = true;
+    article.querySelector(".explanation-panel").hidden = true;
   });
   state.graded = false;
   state.wrongOnly = false;
@@ -970,6 +1124,16 @@ paperModeBtn.addEventListener("click", () => setMode("paper"));
 typeModeBtn.addEventListener("click", () => setMode("type"));
 studentForm.addEventListener("input", updateStudentStatus);
 quizForm.addEventListener("change", updateProgress);
+quizForm.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-explanation]");
+  if (!button) return;
+  const article = button.closest(".question");
+  const panel = article.querySelector(".explanation-panel");
+  const shouldOpen = panel.hidden;
+  panel.hidden = !shouldOpen;
+  button.textContent = shouldOpen ? "收起詳解" : "看詳解";
+  button.setAttribute("aria-expanded", String(shouldOpen));
+});
 typePracticeForm.addEventListener("change", updateTypeProgress);
 resetBtn.addEventListener("click", resetQuiz);
 gradeBtn.addEventListener("click", gradeQuiz);
