@@ -1,7 +1,7 @@
 const labels = ["A", "B", "C", "D", "E"];
 const leaderboardKey = "trigPracticeLeaderboard";
 const studentKey = "trigPracticeStudent";
-const sharedLeaderboardUrl = "https://script.google.com/macros/s/AKfycbxm38oR1qSymPzIf3aEeSjA7WNgQTIYSu19TLfARSB7LG0zkVf4xI7SiUUDvfMKbpuC-A/exec";
+const sharedLeaderboardUrl = "https://script.google.com/macros/s/AKfycbyctoOY03uZKvznm-je5NirX5JZkXixKEhqMc5UgbvEbnKM-AVnY7lS7fz5INjI_tiKig/exec";
 const typeTitles = [
   "第 1 題：直角三角形求 cos",
   "第 2 題：已知 cos 求 tan",

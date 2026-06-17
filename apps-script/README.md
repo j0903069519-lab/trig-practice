@@ -1,7 +1,7 @@
 # Google Apps Script 共用排行榜
 
 - Google Sheet: https://docs.google.com/spreadsheets/d/1rQ7_T27D72z-eZk0U3n-p4utZ50GPqoeeJY3g4ZqQS4/edit
-- Web App URL: https://script.google.com/macros/s/AKfycbxm38oR1qSymPzIf3aEeSjA7WNgQTIYSu19TLfARSB7LG0zkVf4xI7SiUUDvfMKbpuC-A/exec
+- Web App URL: https://script.google.com/macros/s/AKfycbyctoOY03uZKvznm-je5NirX5JZkXixKEhqMc5UgbvEbnKM-AVnY7lS7fz5INjI_tiKig/exec
 
 1. 建立 Google Sheet。
 2. 在 Google Sheet 裡開啟 `擴充功能 > Apps Script`。
