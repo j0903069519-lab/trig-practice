@@ -809,16 +809,48 @@ async function renderLeaderboard(records) {
     return;
   }
 
-  leaderboardList.innerHTML = leaderboardRecords.map((record, index) => `
-    <li>
-      <span class="rank-num">#${index + 1}</span>
-      <span class="rank-main">
-        <span class="rank-name">${escapeHtml(record.studentName)}</span>
-        <span class="rank-meta">${escapeHtml(record.className)} ${escapeHtml(record.seatNumber)} 號｜${escapeHtml(record.paperTitle)}｜${escapeHtml(record.finishedAt)}</span>
-      </span>
-      <span class="rank-score">${record.percent} 分</span>
-    </li>
-  `).join("");
+  leaderboardList.innerHTML = groupLeaderboardByPaper(leaderboardRecords)
+    .map(({ paperTitle, records: paperRecords }) => `
+      <li class="paper-rank-head">${escapeHtml(paperTitle)}</li>
+      ${paperRecords.map((record, index) => `
+        <li>
+          <span class="rank-num">#${index + 1}</span>
+          <span class="rank-main">
+            <span class="rank-name">${escapeHtml(record.studentName)}</span>
+            <span class="rank-meta">${escapeHtml(record.className)} ${escapeHtml(record.seatNumber)} 號｜${escapeHtml(record.finishedAt)}</span>
+          </span>
+          <span class="rank-score">${record.percent} 分</span>
+        </li>
+      `).join("")}
+    `).join("");
+}
+
+function groupLeaderboardByPaper(records) {
+  const groups = {};
+  records.forEach((record) => {
+    const paperTitle = record.paperTitle || "未指定考卷";
+    if (!groups[paperTitle]) groups[paperTitle] = [];
+    groups[paperTitle].push(record);
+  });
+
+  return Object.keys(groups)
+    .sort((a, b) => paperSortValue(a) - paperSortValue(b))
+    .map((paperTitle) => ({
+      paperTitle,
+      records: groups[paperTitle]
+        .sort((a, b) => {
+          if (b.percent !== a.percent) return b.percent - a.percent;
+          if (b.correct !== a.correct) return b.correct - a.correct;
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        })
+        .slice(0, 5),
+    }));
+}
+
+function paperSortValue(paperTitle) {
+  const order = ["練習卷 A", "練習卷 B", "練習卷 C", "練習卷 D", "練習卷 E"];
+  const index = order.indexOf(String(paperTitle || ""));
+  return index === -1 ? 999 : index;
 }
 
 async function addLeaderboardRecord(record) {
@@ -841,8 +873,8 @@ async function addLeaderboardRecord(record) {
     if (b.correct !== a.correct) return b.correct - a.correct;
     return new Date(b.createdAt) - new Date(a.createdAt);
   });
-  saveLeaderboard(records.slice(0, 5));
-  await renderLeaderboard(records.slice(0, 5));
+  saveLeaderboard(records.slice(0, 100));
+  await renderLeaderboard(records);
 }
 
 function updateLeaderboardButton() {

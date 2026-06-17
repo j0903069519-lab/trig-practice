@@ -39,7 +39,7 @@ function doGet(e) {
 
   return output({
     ok: true,
-    records: getTopRecords(),
+    records: getTopRecordsByPaper(),
   }, params.callback);
 }
 
@@ -60,6 +60,25 @@ function appendRecord(params) {
 }
 
 function getTopRecords() {
+  return getSortedRecords().slice(0, 5);
+}
+
+function getTopRecordsByPaper() {
+  const groups = {};
+  getSortedRecords().forEach((record) => {
+    const paperTitle = record.paperTitle || "未指定考卷";
+    if (!groups[paperTitle]) groups[paperTitle] = [];
+    if (groups[paperTitle].length < 5) {
+      groups[paperTitle].push(record);
+    }
+  });
+
+  return Object.keys(groups)
+    .sort(comparePaperTitle)
+    .flatMap((paperTitle) => groups[paperTitle]);
+}
+
+function getSortedRecords() {
   const sheet = getSheet();
   const lastRow = sheet.getLastRow();
   if (lastRow <= 1) return [];
@@ -72,8 +91,7 @@ function getTopRecords() {
       if (b.percent !== a.percent) return b.percent - a.percent;
       if (b.correct !== a.correct) return b.correct - a.correct;
       return new Date(b.createdAt) - new Date(a.createdAt);
-    })
-    .slice(0, 5);
+    });
 }
 
 function getAllRecords() {
@@ -167,6 +185,16 @@ function normalizeSeatNumber(value) {
 function toSeatSortValue(value) {
   const number = Number(String(value || "").replace(/\D/g, ""));
   return Number.isFinite(number) ? number : 9999;
+}
+
+function comparePaperTitle(a, b) {
+  return paperSortValue(a) - paperSortValue(b);
+}
+
+function paperSortValue(value) {
+  const order = ["練習卷 A", "練習卷 B", "練習卷 C", "練習卷 D", "練習卷 E"];
+  const index = order.indexOf(String(value || ""));
+  return index === -1 ? 999 : index;
 }
 
 function isTeacherAuthorized(key) {

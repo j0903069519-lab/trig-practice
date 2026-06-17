@@ -434,6 +434,16 @@ button:active {
   background: #fafbfc;
 }
 
+.leaderboard-list .paper-rank-head {
+  display: block;
+  padding: 8px 2px 2px;
+  border: 0;
+  background: transparent;
+  color: var(--accent-strong);
+  font-size: 15px;
+  font-weight: 900;
+}
+
 .rank-num {
   color: var(--accent-strong);
   font-weight: 900;
