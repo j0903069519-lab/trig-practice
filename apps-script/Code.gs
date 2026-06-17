@@ -1,5 +1,6 @@
 const SPREADSHEET_ID = "1rQ7_T27D72z-eZk0U3n-p4utZ50GPqoeeJY3g4ZqQS4";
 const SHEET_NAME = "Records";
+const TEACHER_KEY_PROPERTY = "TEACHER_RECORDS_KEY";
 const HEADERS = [
   "createdAt",
   "finishedAt",
@@ -18,6 +19,22 @@ function doGet(e) {
 
   if (action === "submit") {
     appendRecord(params);
+  }
+
+  if (action === "records") {
+    if (!isTeacherAuthorized(params.key)) {
+      return output({
+        ok: false,
+        error: "unauthorized",
+        records: [],
+      }, params.callback);
+    }
+
+    return output({
+      ok: true,
+      records: getAllRecords(),
+      summary: getRecordsSummary(),
+    }, params.callback);
   }
 
   return output({
@@ -59,6 +76,57 @@ function getTopRecords() {
     .slice(0, 5);
 }
 
+function getAllRecords() {
+  const sheet = getSheet();
+  const lastRow = sheet.getLastRow();
+  if (lastRow <= 1) return [];
+
+  const rows = sheet.getRange(2, 1, lastRow - 1, HEADERS.length).getValues();
+  return rows
+    .map(rowToRecord)
+    .filter((record) => record.studentName && Number.isFinite(record.percent))
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+}
+
+function getRecordsSummary() {
+  const records = getAllRecords();
+  const seatMap = {};
+
+  records.forEach((record) => {
+    splitSeatNumbers(record.seatNumber).forEach((seatNumber) => {
+      if (!seatMap[seatNumber]) {
+        seatMap[seatNumber] = {
+          seatNumber,
+          names: [],
+          attempts: 0,
+          bestPercent: 0,
+          bestCorrect: 0,
+          papers: [],
+          latestAt: "",
+        };
+      }
+
+      const item = seatMap[seatNumber];
+      item.attempts += 1;
+      if (record.studentName && !item.names.includes(record.studentName)) {
+        item.names.push(record.studentName);
+      }
+      if (record.paperTitle && !item.papers.includes(record.paperTitle)) {
+        item.papers.push(record.paperTitle);
+      }
+      if (record.percent > item.bestPercent || record.correct > item.bestCorrect) {
+        item.bestPercent = record.percent;
+        item.bestCorrect = record.correct;
+      }
+      if (!item.latestAt || new Date(record.createdAt) > new Date(item.latestAt)) {
+        item.latestAt = record.createdAt;
+      }
+    });
+  });
+
+  return Object.values(seatMap).sort((a, b) => toSeatSortValue(a.seatNumber) - toSeatSortValue(b.seatNumber));
+}
+
 function rowToRecord(row) {
   return {
     createdAt: toIsoString(row[0]),
@@ -71,6 +139,39 @@ function rowToRecord(row) {
     total: toNumber(row[7]),
     percent: toNumber(row[8]),
   };
+}
+
+function splitSeatNumbers(value) {
+  const text = String(value || "").trim();
+  if (!text) return [];
+
+  const separated = text
+    .replace(/[，、＋+&]/g, " ")
+    .split(/\s+/)
+    .filter(Boolean);
+  if (separated.length > 1) return separated.map(normalizeSeatNumber);
+
+  const digits = text.replace(/\D/g, "");
+  if (digits.length === 4) {
+    return [digits.slice(0, 2), digits.slice(2, 4)].map(normalizeSeatNumber);
+  }
+  return [normalizeSeatNumber(text)];
+}
+
+function normalizeSeatNumber(value) {
+  const digits = String(value || "").replace(/\D/g, "");
+  if (!digits) return String(value || "").trim();
+  return String(Number(digits));
+}
+
+function toSeatSortValue(value) {
+  const number = Number(String(value || "").replace(/\D/g, ""));
+  return Number.isFinite(number) ? number : 9999;
+}
+
+function isTeacherAuthorized(key) {
+  const teacherKey = PropertiesService.getScriptProperties().getProperty(TEACHER_KEY_PROPERTY);
+  return Boolean(teacherKey && key && String(key) === teacherKey);
 }
 
 function getSheet() {

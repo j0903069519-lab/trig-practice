@@ -13,3 +13,42 @@
 6. 將網站 `app/app.js` 裡的 `sharedLeaderboardUrl` 設為該 URL。
 
 部署完成後，網站會把成績寫入 Google Sheet 的 `Records` 工作表，並讀取全班前五高分。
+
+## 教師查詢全部紀錄
+
+`Code.gs` 支援一個教師用查詢入口：
+
+```text
+WEB_APP_URL?action=records&key=你的教師密碼
+```
+
+它會回傳：
+
+- `records`：全部完整考卷作答紀錄
+- `summary`：以座號整理後的摘要
+
+共同作答的座號也會整理，例如：
+
+- `19 28`
+- `19、28`
+- `1928`
+
+都會拆成 `19` 和 `28` 兩個座號。
+
+### 設定教師密碼
+
+密碼不要寫進 GitHub。請在 Apps Script 裡設定 Script Property：
+
+1. 打開 Apps Script 專案。
+2. 左側點「專案設定」。
+3. 找到「指令碼屬性」。
+4. 新增屬性：
+   - Property：`TEACHER_RECORDS_KEY`
+   - Value：自己設定一組教師密碼
+5. 儲存後重新部署 Web App。
+
+設定完成後，教師查詢網址範例：
+
+```text
+https://script.google.com/macros/s/你的部署ID/exec?action=records&key=你的教師密碼
+```
