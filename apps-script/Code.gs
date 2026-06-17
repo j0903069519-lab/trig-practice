@@ -192,7 +192,7 @@ function comparePaperTitle(a, b) {
 }
 
 function paperSortValue(value) {
-  const order = ["練習卷 A", "練習卷 B", "練習卷 C", "練習卷 D", "練習卷 E"];
+  const order = ["練習卷 A", "練習卷 B", "練習卷 C", "練習卷 D", "練習卷 E", "練習卷 F", "練習卷 G", "練習卷 H", "練習卷 I", "練習卷 J"];
   const index = order.indexOf(String(value || ""));
   return index === -1 ? 999 : index;
 }
