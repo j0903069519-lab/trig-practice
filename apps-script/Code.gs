@@ -146,7 +146,7 @@ function splitSeatNumbers(value) {
   if (!text) return [];
 
   const separated = text
-    .replace(/[，、＋+&]/g, " ")
+    .replace(/[,，、＋+&]/g, " ")
     .split(/\s+/)
     .filter(Boolean);
   if (separated.length > 1) return separated.map(normalizeSeatNumber);
