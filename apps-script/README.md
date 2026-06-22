@@ -27,6 +27,7 @@ WEB_APP_URL?action=studentRecords&className=班級&seatNumber=座號
 - 班級需相同。
 - 座號會支援共同作答格式，例如 `19 28`、`19、28`、`1928`。
 - 最多回傳最近 30 筆紀錄。
+- 新紀錄會回傳 `wrongQuestions`，用來顯示錯題題號；舊紀錄沒有此欄時會顯示未紀錄。
 
 ## 教師查詢全部紀錄
 

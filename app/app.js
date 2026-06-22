@@ -1043,12 +1043,20 @@ function renderStudentRecords(records) {
           <span class="record-main">
             <span class="record-title">${escapeHtml(record.paperTitle || "未指定考卷")}</span>
             <span class="record-meta">${escapeHtml(record.finishedAt || record.createdAt || "")}｜${escapeHtml(record.studentName || "")}</span>
+            <span class="record-wrong">錯題：${escapeHtml(formatWrongQuestions(record.wrongQuestions))}</span>
           </span>
           <span class="record-score">${Number(record.percent) || 0} 分</span>
         </li>
       `).join("")}
     </ul>
   `;
+}
+
+function formatWrongQuestions(value) {
+  const text = String(value || "").trim();
+  if (!text) return "未紀錄";
+  if (text === "none") return "無";
+  return text;
 }
 
 function splitSeatNumbers(value) {
@@ -1287,6 +1295,7 @@ function gradeQuiz() {
       correct,
       total: paper.questions.length,
       percent,
+      wrongQuestions: wrong.length ? wrong.join("、") : "none",
       createdAt: createdAt.toISOString(),
       finishedAt: createdAt.toLocaleString("zh-TW", {
         month: "2-digit",

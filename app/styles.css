@@ -218,6 +218,13 @@ button:focus {
   overflow-wrap: anywhere;
 }
 
+.record-wrong {
+  color: var(--bad);
+  font-size: 12px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
 .record-score {
   color: var(--accent-strong);
   font-weight: 900;

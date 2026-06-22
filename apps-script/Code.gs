@@ -11,6 +11,7 @@ const HEADERS = [
   "correct",
   "total",
   "percent",
+  "wrongQuestions",
 ];
 
 function doGet(e) {
@@ -63,6 +64,7 @@ function appendRecord(params) {
     toNumber(params.correct),
     toNumber(params.total),
     toNumber(params.percent),
+    clean(params.wrongQuestions),
   ];
   sheet.appendRow(record);
 }
@@ -177,6 +179,7 @@ function rowToRecord(row) {
     correct: toNumber(row[6]),
     total: toNumber(row[7]),
     percent: toNumber(row[8]),
+    wrongQuestions: String(row[9] || ""),
   };
 }
 
