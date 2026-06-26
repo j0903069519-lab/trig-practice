@@ -1,6 +1,7 @@
 const SPREADSHEET_ID = "1rQ7_T27D72z-eZk0U3n-p4utZ50GPqoeeJY3g4ZqQS4";
 const SHEET_NAME = "Records";
 const TEACHER_KEY_PROPERTY = "TEACHER_RECORDS_KEY";
+const IS_ARCHIVED = true;
 const HEADERS = [
   "createdAt",
   "finishedAt",
@@ -19,6 +20,13 @@ function doGet(e) {
   const action = params.action || "leaderboard";
 
   if (action === "submit") {
+    if (IS_ARCHIVED) {
+      return output({
+        ok: false,
+        error: "archived",
+        records: getTopRecordsByPaper(),
+      }, params.callback);
+    }
     appendRecord(params);
   }
 

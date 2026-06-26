@@ -71,6 +71,7 @@ main {
 }
 
 .controls,
+.archive-banner,
 .student-panel,
 .mode-tabs,
 .progress-wrap,
@@ -83,7 +84,27 @@ main {
   border-radius: 8px;
 }
 
+.archive-banner {
+  padding: 14px;
+  border-color: rgba(180, 83, 9, 0.24);
+  background: #fffbeb;
+}
+
+.archive-banner h2 {
+  margin: 0 0 4px;
+  font-size: 19px;
+  line-height: 1.2;
+}
+
+.archive-banner p:last-child {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 700;
+  line-height: 1.45;
+}
+
 .student-panel {
+  margin-top: 10px;
   padding: 12px;
 }
 

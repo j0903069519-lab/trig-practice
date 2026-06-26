@@ -2,6 +2,7 @@ const labels = ["A", "B", "C", "D", "E"];
 const leaderboardKey = "trigPracticeLeaderboard";
 const studentKey = "trigPracticeStudent";
 const sharedLeaderboardUrl = "https://script.google.com/macros/s/AKfycbyctoOY03uZKvznm-je5NirX5JZkXixKEhqMc5UgbvEbnKM-AVnY7lS7fz5INjI_tiKig/exec";
+const isArchived = true;
 const typeTitles = [
   "第 1 題：直角三角形求 cos",
   "第 2 題：已知 cos 求 tan",
@@ -1120,6 +1121,22 @@ function updateLeaderboardButton() {
   clearLeaderboardBtn.textContent = hasSharedLeaderboard() ? "重新整理" : "清除紀錄";
 }
 
+function applyArchiveState() {
+  if (!isArchived) return;
+
+  scorePill.textContent = "已封存";
+  gradeBtn.disabled = true;
+  gradeBtn.textContent = "練習已結束";
+  resetBtn.disabled = true;
+  resetBtn.textContent = "已封存";
+  showWrongBtn.disabled = true;
+  typeGradeBtn.disabled = true;
+  typeGradeBtn.textContent = "練習已結束";
+  typeResetBtn.disabled = true;
+  typeResetBtn.textContent = "已封存";
+  typeNewBtn.textContent = "看完整卷紀錄";
+}
+
 function setMode(mode) {
   state.mode = mode;
   const isTypePractice = mode === "type";
@@ -1127,7 +1144,7 @@ function setMode(mode) {
   typePracticeView.hidden = !isTypePractice;
   paperModeBtn.classList.toggle("is-active", !isTypePractice);
   typeModeBtn.classList.toggle("is-active", isTypePractice);
-  scorePill.textContent = isTypePractice ? state.typeScoreText : state.paperScoreText;
+  scorePill.textContent = isArchived ? "已封存" : (isTypePractice ? state.typeScoreText : state.paperScoreText);
 }
 
 function renderPaperOptions() {
@@ -1172,6 +1189,11 @@ function renderQuiz() {
       </article>
     `;
   }).join("");
+  if (isArchived) {
+    quizForm.querySelectorAll("input").forEach((input) => {
+      input.disabled = true;
+    });
+  }
   state.graded = false;
   state.wrongOnly = false;
   showWrongBtn.textContent = "只看錯題";
@@ -1213,6 +1235,11 @@ function renderTypePractice() {
       </article>
     `;
   }).join("");
+  if (isArchived) {
+    typePracticeForm.querySelectorAll("input").forEach((input) => {
+      input.disabled = true;
+    });
+  }
   state.typeGraded = false;
   typeResultPanel.hidden = true;
   state.typeScoreText = "題型練習";
@@ -1237,6 +1264,15 @@ function updateTypeProgress() {
 }
 
 function gradeQuiz() {
+  if (isArchived) {
+    resultPanel.hidden = false;
+    resultPanel.innerHTML = `
+      <h2>練習已封存</h2>
+      <p>本次期末考練習已結束，現在只保留成績查詢與排行榜紀錄。</p>
+    `;
+    return;
+  }
+
   const student = getStudent();
   if (!isStudentReady(student)) {
     studentNotice.hidden = false;
@@ -1309,6 +1345,8 @@ function gradeQuiz() {
 }
 
 function resetQuiz() {
+  if (isArchived) return;
+
   quizForm.reset();
   [...quizForm.querySelectorAll(".question")].forEach((article) => {
     article.classList.remove("is-correct", "is-wrong", "hidden-by-filter");
@@ -1326,6 +1364,15 @@ function resetQuiz() {
 }
 
 function gradeTypePractice() {
+  if (isArchived) {
+    typeResultPanel.hidden = false;
+    typeResultPanel.innerHTML = `
+      <h2>練習已封存</h2>
+      <p>題型練習已關閉，請使用成績查詢查看過去紀錄。</p>
+    `;
+    return;
+  }
+
   const typeQuestions = currentTypeQuestions();
   let correct = 0;
   const wrong = [];
@@ -1363,6 +1410,8 @@ function gradeTypePractice() {
 }
 
 function resetTypePractice() {
+  if (isArchived) return;
+
   typePracticeForm.reset();
   [...typePracticeForm.querySelectorAll(".question")].forEach((article) => {
     article.classList.remove("is-correct", "is-wrong");
@@ -1437,4 +1486,5 @@ renderTypeOptions();
 renderQuiz();
 renderTypePractice();
 updateLeaderboardButton();
+applyArchiveState();
 renderLeaderboard();
