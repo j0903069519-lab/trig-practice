@@ -1,7 +1,7 @@
 const SPREADSHEET_ID = "1rQ7_T27D72z-eZk0U3n-p4utZ50GPqoeeJY3g4ZqQS4";
 const SHEET_NAME = "Records";
 const TEACHER_KEY_PROPERTY = "TEACHER_RECORDS_KEY";
-const IS_ARCHIVED = true;
+const IS_ARCHIVED = false;
 const HEADERS = [
   "createdAt",
   "finishedAt",
@@ -224,9 +224,8 @@ function comparePaperTitle(a, b) {
 }
 
 function paperSortValue(value) {
-  const order = ["練習卷 A", "練習卷 B", "練習卷 C", "練習卷 D", "練習卷 E", "練習卷 F", "練習卷 G", "練習卷 H", "練習卷 I", "練習卷 J"];
-  const index = order.indexOf(String(value || ""));
-  return index === -1 ? 999 : index;
+  const match = String(value || "").match(/(?:補考練習卷|練習卷)\s*([A-J])/);
+  return match ? match[1].charCodeAt(0) - "A".charCodeAt(0) : 999;
 }
 
 function isTeacherAuthorized(key) {

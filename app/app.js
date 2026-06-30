@@ -2,7 +2,8 @@ const labels = ["A", "B", "C", "D", "E"];
 const leaderboardKey = "trigPracticeLeaderboard";
 const studentKey = "trigPracticeStudent";
 const sharedLeaderboardUrl = "https://script.google.com/macros/s/AKfycbyctoOY03uZKvznm-je5NirX5JZkXixKEhqMc5UgbvEbnKM-AVnY7lS7fz5INjI_tiKig/exec";
-const isArchived = true;
+const isArchived = false;
+const activePaperTitlePrefix = "補考練習卷";
 const typeTitles = [
   "第 1 題：直角三角形求 cos",
   "第 2 題：已知 cos 求 tan",
@@ -398,6 +399,240 @@ function makeMultiQuestion(stem, correctOptions, distractors) {
     .map((option, index) => correctOptions.includes(option) ? labels[index] : "")
     .join("");
   return { question: [stem, options, true], answer };
+}
+
+function configureMakeupPractice() {
+  const makeupTypeTitles = [
+    "第 1 題：數列前五項",
+    "第 2 題：等差數列",
+    "第 3 題：等比級數",
+    "第 4 題：平均數與變異數",
+    "第 5 題：否定敘述",
+    "第 6 題：排列坐法",
+    "第 7 題：直角三角形求 cos",
+    "第 8 題：已知 cos 求 tan",
+    "第 9 題：同界角",
+    "第 10 題：終邊點求 sin",
+  ];
+
+  const makeupBank = [
+    [
+      { stem: "已知數列的一般項為 aₙ=3n-2，下列何者為前五項？", correct: "1，4，7，10，13", distractors: ["3，6，9，12，15", "1，3，5，7，9", "2，5，8，11，14", "4，7，10，13，16"] },
+      { stem: "已知數列的一般項為 aₙ=2n+1，下列何者為前五項？", correct: "3，5，7，9，11", distractors: ["1，3，5，7，9", "2，4，6，8，10", "4，6，8，10，12", "3，6，9，12，15"] },
+      { stem: "已知數列的一般項為 aₙ=4n-1，下列何者為前五項？", correct: "3，7，11，15，19", distractors: ["4，8，12，16，20", "1，5，9，13，17", "5，9，13，17，21", "3，6，9，12，15"] },
+      { stem: "已知數列的一般項為 aₙ=5n，下列何者為前五項？", correct: "5，10，15，20，25", distractors: ["0，5，10，15，20", "1，5，10，15，20", "5，15，25，35，45", "10，15，20，25，30"] },
+      { stem: "已知數列的一般項為 aₙ=n²+1，下列何者為前五項？", correct: "2，5，10，17，26", distractors: ["1，4，9，16，25", "2，4，6，8，10", "3，6，11，18，27", "2，6，12，20，30"] },
+      { stem: "已知數列的一般項為 aₙ=2n²，下列何者為前五項？", correct: "2，8，18，32，50", distractors: ["2，4，6，8，10", "4，8，12，16，20", "1，4，9，16，25", "2，6，12，20，30"] },
+      { stem: "已知數列的一般項為 aₙ=6n-4，下列何者為前五項？", correct: "2，8，14，20，26", distractors: ["6，12，18，24，30", "2，6，10，14，18", "4，10，16，22，28", "8，14，20，26，32"] },
+      { stem: "已知數列的一般項為 aₙ=10-n，下列何者為前五項？", correct: "9，8，7，6，5", distractors: ["10，9，8，7，6", "8，7，6，5，4", "9，7，5，3，1", "1，2，3，4，5"] },
+      { stem: "已知數列的一般項為 aₙ=3n+4，下列何者為前五項？", correct: "7，10，13，16，19", distractors: ["4，7，10，13，16", "3，6，9，12，15", "7，11，15，19，23", "10，13，16，19，22"] },
+      { stem: "已知數列的一般項為 aₙ=20-2n，下列何者為前五項？", correct: "18，16，14，12，10", distractors: ["20，18，16，14，12", "16，14，12，10，8", "18，15，12，9，6", "2，4，6，8，10"] },
+    ],
+    [
+      { stem: "已知 aₙ 是等差數列，且前三項是 18，14，10，下列何者正確？", correct: "a₁=18，d=-4，a₁₀=-18", distractors: ["a₁=18，d=4，a₁₀=54", "a₁=14，d=-4，a₁₀=-22", "a₁=18，d=-2，a₁₀=0", "a₁=10，d=-4，a₁₀=-26"] },
+      { stem: "已知 aₙ 是等差數列，且前三項是 21，15，9，下列何者正確？", correct: "a₁=21，d=-6，a₁₀=-33", distractors: ["a₁=21，d=6，a₁₀=75", "a₁=15，d=-6，a₁₀=-39", "a₁=21，d=-3，a₁₀=-6", "a₁=9，d=-6，a₁₀=-45"] },
+      { stem: "已知 aₙ 是等差數列，且前三項是 5，9，13，下列何者正確？", correct: "a₁=5，d=4，a₁₀=41", distractors: ["a₁=5，d=-4，a₁₀=-31", "a₁=9，d=4，a₁₀=45", "a₁=5，d=8，a₁₀=77", "a₁=13，d=4，a₁₀=49"] },
+      { stem: "已知 aₙ 是等差數列，且前三項是 -2，3，8，下列何者正確？", correct: "a₁=-2，d=5，a₁₀=43", distractors: ["a₁=-2，d=-5，a₁₀=-47", "a₁=3，d=5，a₁₀=48", "a₁=-2，d=10，a₁₀=88", "a₁=8，d=5，a₁₀=53"] },
+      { stem: "已知 aₙ 是等差數列，且前三項是 30，27，24，下列何者正確？", correct: "a₁=30，d=-3，a₁₀=3", distractors: ["a₁=30，d=3，a₁₀=57", "a₁=27，d=-3，a₁₀=0", "a₁=30，d=-6，a₁₀=-24", "a₁=24，d=-3，a₁₀=-3"] },
+      { stem: "已知 aₙ 是等差數列，且前三項是 4，11，18，下列何者正確？", correct: "a₁=4，d=7，a₁₀=67", distractors: ["a₁=4，d=-7，a₁₀=-59", "a₁=11，d=7，a₁₀=74", "a₁=4，d=14，a₁₀=130", "a₁=18，d=7，a₁₀=81"] },
+      { stem: "已知 aₙ 是等差數列，且前三項是 12，7，2，下列何者正確？", correct: "a₁=12，d=-5，a₁₀=-33", distractors: ["a₁=12，d=5，a₁₀=57", "a₁=7，d=-5，a₁₀=-38", "a₁=12，d=-10，a₁₀=-78", "a₁=2，d=-5，a₁₀=-43"] },
+      { stem: "已知 aₙ 是等差數列，且前三項是 -5，-1，3，下列何者正確？", correct: "a₁=-5，d=4，a₁₀=31", distractors: ["a₁=-5，d=-4，a₁₀=-41", "a₁=-1，d=4，a₁₀=35", "a₁=-5，d=8，a₁₀=67", "a₁=3，d=4，a₁₀=39"] },
+      { stem: "已知 aₙ 是等差數列，且前三項是 40，32，24，下列何者正確？", correct: "a₁=40，d=-8，a₁₀=-32", distractors: ["a₁=40，d=8，a₁₀=112", "a₁=32，d=-8，a₁₀=-40", "a₁=40，d=-4，a₁₀=4", "a₁=24，d=-8，a₁₀=-48"] },
+      { stem: "已知 aₙ 是等差數列，且前三項是 6，12，18，下列何者正確？", correct: "a₁=6，d=6，a₁₀=60", distractors: ["a₁=6，d=-6，a₁₀=-48", "a₁=12，d=6，a₁₀=66", "a₁=6，d=12，a₁₀=114", "a₁=18，d=6，a₁₀=72"] },
+    ],
+    [
+      { stem: "等比級數 1+2+4+...+1024 的和為何？", correct: "2047", distractors: ["1024", "1025", "2048", "4095"] },
+      { stem: "等比級數 1+3+9+...+729 的和為何？", correct: "1093", distractors: ["729", "730", "1092", "2186"] },
+      { stem: "等比級數 1+2+4+...+2048 的和為何？", correct: "4095", distractors: ["2048", "2049", "4096", "8191"] },
+      { stem: "等比級數 2+4+8+...+512 的和為何？", correct: "1022", distractors: ["512", "1024", "1023", "510"] },
+      { stem: "等比級數 3+6+12+...+384 的和為何？", correct: "765", distractors: ["384", "768", "381", "767"] },
+      { stem: "等比級數 1+4+16+...+1024 的和為何？", correct: "1365", distractors: ["1024", "1364", "1366", "4095"] },
+      { stem: "等比級數 5+10+20+...+320 的和為何？", correct: "635", distractors: ["320", "640", "630", "315"] },
+      { stem: "等比級數 2+6+18+...+486 的和為何？", correct: "728", distractors: ["486", "729", "730", "242"] },
+      { stem: "等比級數 4+8+16+...+256 的和為何？", correct: "508", distractors: ["256", "512", "504", "510"] },
+      { stem: "等比級數 1+5+25+...+3125 的和為何？", correct: "3906", distractors: ["3125", "3905", "3907", "7812"] },
+    ],
+    [
+      { stem: "有一組資料：6，8，10，12，14。下列何者正確？", correct: "μ=10，σ²=8，σ=2√2", distractors: ["μ=10，σ²=4，σ=2", "μ=12，σ²=8，σ=2√2", "μ=10，σ²=10，σ=√10", "μ=8，σ²=8，σ=2√2"] },
+      { stem: "有一組資料：4，5，6，7，8。下列何者正確？", correct: "μ=6，σ²=2，σ=√2", distractors: ["μ=6，σ²=4，σ=2", "μ=5，σ²=2，σ=√2", "μ=6，σ²=10，σ=√10", "μ=7，σ²=2，σ=√2"] },
+      { stem: "有一組資料：10，12，14，16，18。下列何者正確？", correct: "μ=14，σ²=8，σ=2√2", distractors: ["μ=14，σ²=4，σ=2", "μ=12，σ²=8，σ=2√2", "μ=14，σ²=10，σ=√10", "μ=16，σ²=8，σ=2√2"] },
+      { stem: "有一組資料：9，10，11，13，13，14，18，19，20，23。下列何者正確？", correct: "μ=15，σ²=20，σ=2√5", distractors: ["μ=15，σ²=10，σ=√10", "μ=14，σ²=20，σ=2√5", "μ=15，σ²=25，σ=5", "μ=16，σ²=20，σ=2√5"] },
+      { stem: "有一組資料：2，4，6，8，10。下列何者正確？", correct: "μ=6，σ²=8，σ=2√2", distractors: ["μ=6，σ²=4，σ=2", "μ=5，σ²=8，σ=2√2", "μ=6，σ²=10，σ=√10", "μ=8，σ²=8，σ=2√2"] },
+      { stem: "有一組資料：7，9，11，13，15。下列何者正確？", correct: "μ=11，σ²=8，σ=2√2", distractors: ["μ=11，σ²=4，σ=2", "μ=9，σ²=8，σ=2√2", "μ=11，σ²=10，σ=√10", "μ=13，σ²=8，σ=2√2"] },
+      { stem: "有一組資料：1，3，5，7，9。下列何者正確？", correct: "μ=5，σ²=8，σ=2√2", distractors: ["μ=5，σ²=4，σ=2", "μ=4，σ²=8，σ=2√2", "μ=5，σ²=10，σ=√10", "μ=7，σ²=8，σ=2√2"] },
+      { stem: "有一組資料：20，22，24，26，28。下列何者正確？", correct: "μ=24，σ²=8，σ=2√2", distractors: ["μ=24，σ²=4，σ=2", "μ=22，σ²=8，σ=2√2", "μ=24，σ²=10，σ=√10", "μ=26，σ²=8，σ=2√2"] },
+      { stem: "有一組資料：3，6，9，12，15。下列何者正確？", correct: "μ=9，σ²=18，σ=3√2", distractors: ["μ=9，σ²=9，σ=3", "μ=6，σ²=18，σ=3√2", "μ=9，σ²=20，σ=2√5", "μ=12，σ²=18，σ=3√2"] },
+      { stem: "有一組資料：11，13，15，17，19。下列何者正確？", correct: "μ=15，σ²=8，σ=2√2", distractors: ["μ=15，σ²=4，σ=2", "μ=13，σ²=8，σ=2√2", "μ=15，σ²=10，σ=√10", "μ=17，σ²=8，σ=2√2"] },
+    ],
+    [
+      { stem: "命題「x 是奇數或 x 是 3 的倍數」的否定為何？", correct: "x 不是奇數且 x 不是 3 的倍數", distractors: ["x 不是奇數或 x 不是 3 的倍數", "x 是偶數或 x 不是 3 的倍數", "x 是奇數且 x 是 3 的倍數", "x 不是奇數且 x 是 3 的倍數"] },
+      { stem: "命題「x 是正數或 x 是整數」的否定為何？", correct: "x 不是正數且 x 不是整數", distractors: ["x 不是正數或 x 不是整數", "x 是負數或 x 不是整數", "x 是正數且 x 是整數", "x 不是正數且 x 是整數"] },
+      { stem: "命題「a>0 或 b>0」的否定為何？", correct: "a≤0 且 b≤0", distractors: ["a≤0 或 b≤0", "a<0 且 b<0", "a>0 且 b>0", "a≤0 且 b>0"] },
+      { stem: "命題「今天下雨或天氣很冷」的否定為何？", correct: "今天沒有下雨且天氣不冷", distractors: ["今天沒有下雨或天氣不冷", "今天下雨且天氣很冷", "今天沒有下雨且天氣很冷", "今天下雨或天氣不冷"] },
+      { stem: "命題「x 是偶數或 x 是質數」的否定為何？", correct: "x 不是偶數且 x 不是質數", distractors: ["x 不是偶數或 x 不是質數", "x 是奇數或 x 不是質數", "x 是偶數且 x 是質數", "x 不是偶數且 x 是質數"] },
+      { stem: "命題「小明會游泳或會跑步」的否定為何？", correct: "小明不會游泳且不會跑步", distractors: ["小明不會游泳或不會跑步", "小明會游泳且會跑步", "小明不會游泳且會跑步", "小明會游泳或不會跑步"] },
+      { stem: "命題「n 是 5 的倍數或 n 是 2 的倍數」的否定為何？", correct: "n 不是 5 的倍數且 n 不是 2 的倍數", distractors: ["n 不是 5 的倍數或 n 不是 2 的倍數", "n 是 5 的倍數且 n 是 2 的倍數", "n 不是 5 的倍數且 n 是 2 的倍數", "n 是 5 的倍數或 n 不是 2 的倍數"] },
+      { stem: "命題「分數及格或作業完成」的否定為何？", correct: "分數不及格且作業未完成", distractors: ["分數不及格或作業未完成", "分數及格且作業完成", "分數不及格且作業完成", "分數及格或作業未完成"] },
+      { stem: "命題「x≥10 或 x≤0」的否定為何？", correct: "x<10 且 x>0", distractors: ["x<10 或 x>0", "x≤10 且 x≥0", "x≥10 且 x≤0", "x<10 且 x≤0"] },
+      { stem: "命題「手機有電或網路正常」的否定為何？", correct: "手機沒電且網路不正常", distractors: ["手機沒電或網路不正常", "手機有電且網路正常", "手機沒電且網路正常", "手機有電或網路不正常"] },
+    ],
+    [
+      { stem: "4 個人坐成一排，共有幾種不同坐法？", correct: "24", distractors: ["4", "8", "16", "120"] },
+      { stem: "6 個人坐成一排，共有幾種不同坐法？", correct: "720", distractors: ["36", "120", "360", "600"] },
+      { stem: "3 個人坐成一排，共有幾種不同坐法？", correct: "6", distractors: ["3", "9", "12", "24"] },
+      { stem: "7 個人坐成一排，共有幾種不同坐法？", correct: "5040", distractors: ["720", "840", "2520", "10080"] },
+      { stem: "8 個人坐成一排，共有幾種不同坐法？", correct: "40320", distractors: ["5040", "10080", "20160", "80640"] },
+      { stem: "5 個人坐成一排，共有幾種不同坐法？", correct: "120", distractors: ["20", "25", "60", "240"] },
+      { stem: "2 個人坐成一排，共有幾種不同坐法？", correct: "2", distractors: ["1", "4", "6", "8"] },
+      { stem: "9 個人坐成一排，共有幾種不同坐法？", correct: "362880", distractors: ["40320", "181440", "725760", "5040"] },
+      { stem: "5 個不同獎品排成一列，共有幾種不同排法？", correct: "120", distractors: ["25", "60", "100", "240"] },
+      { stem: "6 張不同卡片排成一列，共有幾種不同排法？", correct: "720", distractors: ["120", "360", "600", "1440"] },
+    ],
+    [
+      { stem: "在三角形 ABC 中，已知 ∠C 為直角，AB=10，BC=6，AC=8，下列何者為 cos A 之值？", correct: "8/10", distractors: ["6/10", "8/6", "10/8", "6/8"] },
+      { stem: "在三角形 ABC 中，已知 ∠C 為直角，AB=17，BC=15，AC=8，下列何者為 cos A 之值？", correct: "8/17", distractors: ["15/17", "8/15", "17/8", "15/8"] },
+      { stem: "在三角形 ABC 中，已知 ∠C 為直角，AB=25，BC=7，AC=24，下列何者為 cos A 之值？", correct: "24/25", distractors: ["7/25", "24/7", "25/24", "7/24"] },
+      { stem: "在三角形 ABC 中，已知 ∠C 為直角，AB=41，BC=9，AC=40，下列何者為 cos A 之值？", correct: "40/41", distractors: ["9/41", "40/9", "41/40", "9/40"] },
+      { stem: "在三角形 ABC 中，已知 ∠C 為直角，AB=29，BC=20，AC=21，下列何者為 cos A 之值？", correct: "21/29", distractors: ["20/29", "21/20", "29/21", "20/21"] },
+      { stem: "在三角形 ABC 中，已知 ∠C 為直角，AB=13，BC=5，AC=12，下列何者為 cos A 之值？", correct: "12/13", distractors: ["5/13", "12/5", "13/12", "5/12"] },
+      { stem: "在三角形 ABC 中，已知 ∠C 為直角，AB=13，BC=12，AC=5，下列何者為 cos A 之值？", correct: "5/13", distractors: ["12/13", "5/12", "13/5", "12/5"] },
+      { stem: "在三角形 ABC 中，已知 ∠C 為直角，AB=5，BC=3，AC=4，下列何者為 cos A 之值？", correct: "4/5", distractors: ["3/5", "4/3", "5/4", "3/4"] },
+      { stem: "在三角形 ABC 中，已知 ∠C 為直角，AB=37，BC=35，AC=12，下列何者為 cos A 之值？", correct: "12/37", distractors: ["35/37", "12/35", "37/12", "35/12"] },
+      { stem: "在三角形 ABC 中，已知 ∠C 為直角，AB=65，BC=16，AC=63，下列何者為 cos A 之值？", correct: "63/65", distractors: ["16/65", "63/16", "65/63", "16/63"] },
+    ],
+    [
+      { stem: "已知 0°<θ<90°，且 cos θ=4/5，下列何者為 tan θ 之值？", correct: "3/4", distractors: ["4/3", "3/5", "4/5", "5/3"] },
+      { stem: "已知 0°<θ<90°，且 cos θ=5/13，下列何者為 tan θ 之值？", correct: "12/5", distractors: ["5/12", "12/13", "5/13", "13/12"] },
+      { stem: "已知 0°<θ<90°，且 cos θ=8/17，下列何者為 tan θ 之值？", correct: "15/8", distractors: ["8/15", "15/17", "8/17", "17/15"] },
+      { stem: "已知 0°<θ<90°，且 cos θ=12/13，下列何者為 tan θ 之值？", correct: "5/12", distractors: ["12/5", "5/13", "12/13", "13/5"] },
+      { stem: "已知 0°<θ<90°，且 cos θ=7/25，下列何者為 tan θ 之值？", correct: "24/7", distractors: ["7/24", "24/25", "7/25", "25/24"] },
+      { stem: "已知 0°<θ<90°，且 cos θ=9/41，下列何者為 tan θ 之值？", correct: "40/9", distractors: ["9/40", "40/41", "9/41", "41/40"] },
+      { stem: "已知 0°<θ<90°，且 cos θ=20/29，下列何者為 tan θ 之值？", correct: "21/20", distractors: ["20/21", "21/29", "20/29", "29/21"] },
+      { stem: "已知 0°<θ<90°，且 cos θ=1/3，下列何者為 tan θ 之值？", correct: "√8", distractors: ["1/√8", "√8/3", "1/3", "3/√8"] },
+      { stem: "已知 0°<θ<90°，且 cos θ=2/5，下列何者為 tan θ 之值？", correct: "√21/2", distractors: ["2/√21", "√21/5", "2/5", "5/√21"] },
+      { stem: "已知 0°<θ<90°，且 cos θ=3/7，下列何者為 tan θ 之值？", correct: "√40/3", distractors: ["3/√40", "√40/7", "3/7", "7/√40"] },
+    ],
+    [
+      { stem: "下列何者為 45° 的同界角？", correct: "405°", distractors: ["135°", "315°", "-45°", "225°"] },
+      { stem: "下列何者為 210° 的同界角？", correct: "-150°", distractors: ["150°", "30°", "390°", "-210°"] },
+      { stem: "下列何者為 75° 的同界角？", correct: "435°", distractors: ["255°", "-75°", "315°", "-435°"] },
+      { stem: "下列何者為 300° 的同界角？", correct: "-60°", distractors: ["60°", "120°", "660°", "-300°"] },
+      { stem: "下列何者為 150° 的同界角？", correct: "510°", distractors: ["-30°", "330°", "210°", "-150°"] },
+      { stem: "下列何者為 270° 的同界角？", correct: "-90°", distractors: ["90°", "180°", "450°", "-270°"] },
+      { stem: "下列何者為 315° 的同界角？", correct: "-45°", distractors: ["45°", "135°", "-315°", "615°"] },
+      { stem: "下列何者為 18° 的同界角？", correct: "378°", distractors: ["162°", "198°", "-18°", "342°"] },
+      { stem: "下列何者為 123° 的同界角？", correct: "483°", distractors: ["237°", "-123°", "303°", "-483°"] },
+      { stem: "下列何者為 240° 的同界角？", correct: "600°", distractors: ["120°", "-240°", "300°", "-600°"] },
+    ],
+    [
+      { stem: "已知點 P(3,4) 在標準位置角 θ 的終邊上，下列何者為 sin θ？", correct: "4/5", distractors: ["3/5", "-4/5", "4/3", "-3/5"] },
+      { stem: "已知點 P(-5,12) 在標準位置角 θ 的終邊上，下列何者為 sin θ？", correct: "12/13", distractors: ["-5/13", "-12/13", "5/13", "12/5"] },
+      { stem: "已知點 P(8,-15) 在標準位置角 θ 的終邊上，下列何者為 sin θ？", correct: "-15/17", distractors: ["8/17", "15/17", "-8/17", "-15/8"] },
+      { stem: "已知點 P(-7,-24) 在標準位置角 θ 的終邊上，下列何者為 sin θ？", correct: "-24/25", distractors: ["-7/25", "24/25", "7/25", "-24/7"] },
+      { stem: "已知點 P(20,21) 在標準位置角 θ 的終邊上，下列何者為 sin θ？", correct: "21/29", distractors: ["20/29", "-21/29", "21/20", "-20/29"] },
+      { stem: "已知點 P(-9,40) 在標準位置角 θ 的終邊上，下列何者為 sin θ？", correct: "40/41", distractors: ["-9/41", "-40/41", "9/41", "40/9"] },
+      { stem: "已知點 P(5,-12) 在標準位置角 θ 的終邊上，下列何者為 sin θ？", correct: "-12/13", distractors: ["5/13", "12/13", "-5/13", "-12/5"] },
+      { stem: "已知點 P(6,8) 在標準位置角 θ 的終邊上，下列何者為 sin θ？", correct: "8/10", distractors: ["6/10", "-8/10", "8/6", "-6/10"] },
+      { stem: "已知點 P(-12,-5) 在標準位置角 θ 的終邊上，下列何者為 sin θ？", correct: "-5/13", distractors: ["-12/13", "5/13", "12/13", "-5/12"] },
+      { stem: "已知點 P(-3,2) 在標準位置角 θ 的終邊上，下列何者為 sin θ？", correct: "2/√13", distractors: ["-3/√13", "-2/√13", "3/√13", "2/3"] },
+    ],
+  ];
+
+  function makeFixedQuestion(item, slot) {
+    const correct = String(item.correct);
+    const distractors = unique(item.distractors).filter((option) => option !== correct).slice(0, 4);
+    const answerIndex = slot % labels.length;
+    const options = [];
+    for (let index = 0; index < labels.length; index += 1) {
+      options[index] = index === answerIndex ? correct : distractors.shift();
+    }
+    return { question: [item.stem, options], answer: labels[answerIndex] };
+  }
+
+  typeTitles.length = 0;
+  typeTitles.push(...makeupTypeTitles);
+  papers.length = 0;
+  papers.push(...["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"].map((id, paperIndex) => {
+    const builtQuestions = makeupBank.map((questionSet, typeIndex) => makeFixedQuestion(questionSet[paperIndex], paperIndex + typeIndex));
+    return {
+      id,
+      title: `${activePaperTitlePrefix} ${id}`,
+      answers: builtQuestions.map((item) => item.answer),
+      questions: builtQuestions.map((item) => item.question),
+    };
+  }));
+
+  generateQuestion = function generateMakeupQuestion(typeIndex) {
+    const questionSet = makeupBank[typeIndex] || makeupBank[0];
+    const item = pick(questionSet);
+    return makeFixedQuestion(item, Math.floor(Math.random() * labels.length));
+  };
+
+  explanationSteps = function makeupExplanationSteps(index) {
+    const steps = [
+      [
+        "數列的一般項 aₙ 就是第 n 項的公式。",
+        "要求前五項，就把 n 依序代 1、2、3、4、5。",
+        "每代一次算出一個數，照順序排起來。",
+        "最後看哪個選項的五個數字完全一樣。",
+      ],
+      [
+        "等差數列的公差 d 是後一項減前一項。",
+        "前三項已經給出來，所以 a₁ 就是第一個數，d 用第二項減第一項。",
+        "第 10 項公式是 a₁₀=a₁+9d，因為從第 1 項到第 10 項走了 9 次公差。",
+        "把 a₁ 和 d 代進去，再和選項比對。",
+      ],
+      [
+        "這類題目可以用等比級數公式，也可以用比較快的觀察法。",
+        "若是 1+2+4+...+最後一項，總和會等於下一個 2 的次方減 1。",
+        "若首項不是 1，就先確認每一項是否都乘同一個倍率。",
+        "用公式 S=a(rⁿ-1)/(r-1)，或用規律加總後比對選項。",
+      ],
+      [
+        "平均數 μ 是全部資料相加後除以資料個數。",
+        "變異數 σ² 是每個資料減平均數後平方，再全部平均。",
+        "標準差 σ 是變異數開根號。",
+        "先算 μ，再算 σ²，最後才開根號，順序不要反過來。",
+      ],
+      [
+        "否定「A 或 B」時，要變成「不是 A 且不是 B」。",
+        "口訣是：或變且，兩邊都要否定。",
+        "所以不能只把其中一邊否定，也不能把「或」留下來。",
+        "看選項時，找同時出現「不是 A」和「不是 B」，中間連接詞是「且」的選項。",
+      ],
+      [
+        "幾個不同的人坐成一排，就是排列問題。",
+        "第一個座位有 n 種選法，第二個剩 n-1 種，接著一直乘下去。",
+        "所以 n 個人排成一排共有 n! 種。",
+        "例如 5 個人就是 5×4×3×2×1=120。",
+      ],
+      [
+        "直角三角形中，對著直角的邊是斜邊。",
+        "要求 cos A，要站在角 A 看：靠著角 A 的直角邊是鄰邊。",
+        "公式是 cos A=鄰邊/斜邊。",
+        "本題通常 AB 是斜邊，AC 是角 A 的鄰邊，所以用 AC/AB。",
+      ],
+      [
+        "cos θ 可以看成鄰邊/斜邊。",
+        "先用畢氏定理找對邊：對邊²=斜邊²-鄰邊²。",
+        "tan θ=對邊/鄰邊。",
+        "因為 θ 是銳角，對邊、鄰邊和 tan θ 都取正值。",
+      ],
+      [
+        "同界角就是終邊相同的角。",
+        "判斷時，用選項角度減題目角度。",
+        "如果差是 360° 的倍數，就代表同界。",
+        "最常見的是加 360° 或減 360°。",
+      ],
+      [
+        "點 P(x,y) 在終邊上時，先算 r=√(x²+y²)。",
+        "sin θ 的公式是 y/r，也就是 y 坐標除以半徑。",
+        "y 是正的，sin 就是正；y 是負的，sin 就是負。",
+        "不要把 x 拿來算 sin，x 是 cos 會用到的。",
+      ],
+    ];
+    return steps[index] || ["先整理題目給的條件，再套用本題型固定公式。", "算完後與選項比對。"];
+  };
 }
 
 function generateQuestion(typeIndex) {
@@ -938,7 +1173,7 @@ async function loadSharedLeaderboard() {
 }
 
 async function renderLeaderboard(records) {
-  const leaderboardRecords = records || await loadSharedLeaderboard();
+  const leaderboardRecords = (records || await loadSharedLeaderboard()).filter(isCurrentPracticeRecord);
   if (!leaderboardRecords.length) {
     leaderboardList.innerHTML = `<li class="empty-rank">尚無紀錄，完成一次批改後會出現在這裡。</li>`;
     return;
@@ -1005,7 +1240,8 @@ async function queryStudentRecords() {
       throw new Error("invalid student records response");
     }
     renderStudentRecords(data.records);
-    queryRecordsStatus.textContent = data.records.length ? `找到 ${data.records.length} 筆` : "沒有紀錄";
+    const currentRecordCount = data.records.filter(isCurrentPracticeRecord).length;
+    queryRecordsStatus.textContent = currentRecordCount ? `找到 ${currentRecordCount} 筆` : "沒有紀錄";
   } catch {
     queryRecordsStatus.textContent = "查詢失敗，稍後再試";
     queryRecordsStatus.classList.add("is-error");
@@ -1032,14 +1268,15 @@ async function requestStudentRecords(className, seatNumber) {
 
 function renderStudentRecords(records) {
   studentRecordsPanel.hidden = false;
-  if (!records.length) {
+  const currentRecords = records.filter(isCurrentPracticeRecord);
+  if (!currentRecords.length) {
     studentRecordsPanel.innerHTML = `<p>查不到這個班級座號的完整考卷紀錄。</p>`;
     return;
   }
 
   studentRecordsPanel.innerHTML = `
     <ul class="student-records-list">
-      ${records.map((record) => `
+      ${currentRecords.map((record) => `
         <li>
           <span class="record-main">
             <span class="record-title">${escapeHtml(record.paperTitle || "未指定考卷")}</span>
@@ -1051,6 +1288,10 @@ function renderStudentRecords(records) {
       `).join("")}
     </ul>
   `;
+}
+
+function isCurrentPracticeRecord(record) {
+  return String(record.paperTitle || "").startsWith(activePaperTitlePrefix);
 }
 
 function formatWrongQuestions(value) {
@@ -1088,9 +1329,8 @@ function normalizeText(value) {
 }
 
 function paperSortValue(paperTitle) {
-  const order = ["練習卷 A", "練習卷 B", "練習卷 C", "練習卷 D", "練習卷 E", "練習卷 F", "練習卷 G", "練習卷 H", "練習卷 I", "練習卷 J"];
-  const index = order.indexOf(String(paperTitle || ""));
-  return index === -1 ? 999 : index;
+  const match = String(paperTitle || "").match(/(?:補考練習卷|練習卷)\s*([A-J])/);
+  return match ? match[1].charCodeAt(0) - "A".charCodeAt(0) : 999;
 }
 
 async function addLeaderboardRecord(record) {
@@ -1480,6 +1720,7 @@ clearLeaderboardBtn.addEventListener("click", async () => {
   await renderLeaderboard([]);
 });
 
+configureMakeupPractice();
 loadStudent();
 renderPaperOptions();
 renderTypeOptions();
