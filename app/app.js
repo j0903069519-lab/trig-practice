@@ -402,9 +402,13 @@ function makeMultiQuestion(stem, correctOptions, distractors) {
   return { question: [stem, options, true], answer };
 }
 
+function mathTex(expression) {
+  return `\\(${expression}\\)`;
+}
+
 function configureImageExam20260829() {
-  const frac = (top, bottom) => `<span class="math-frac"><span>${top}</span><span>${bottom}</span></span>`;
-  const root = (value) => `<span class="math-root">√${value}</span>`;
+  const frac = (top, bottom) => mathTex(`\\frac{${top}}{${bottom}}`);
+  const root = (value) => `\\sqrt{${value}}`;
   const answers = [
     "B", "E", "A", "A", "C",
     "D", "C", "C", "C", "E",
@@ -1150,6 +1154,17 @@ function escapeHtml(value) {
     .replace(/'/g, "&#039;");
 }
 
+function renderMath(container) {
+  if (typeof renderMathInElement !== "function") return;
+  renderMathInElement(container, {
+    delimiters: [
+      { left: "\\(", right: "\\)", display: false },
+      { left: "\\[", right: "\\]", display: true },
+    ],
+    throwOnError: false,
+  });
+}
+
 function answerLabelText(question, answer) {
   const [, options] = question;
   return answer
@@ -1657,6 +1672,7 @@ function renderQuiz() {
       <button type="button" data-question-nav="next">下一題</button>
     </section>
   `;
+  renderMath(quizForm);
   if (isArchived) {
     quizForm.querySelectorAll("input").forEach((input) => {
       input.disabled = true;
@@ -1704,6 +1720,7 @@ function renderTypePractice() {
       </article>
     `;
   }).join("");
+  renderMath(typePracticeForm);
   if (isArchived) {
     typePracticeForm.querySelectorAll("input").forEach((input) => {
       input.disabled = true;
@@ -1798,6 +1815,7 @@ function gradeQuiz() {
     explanationButton.setAttribute("aria-expanded", "false");
     explanationPanel.hidden = true;
     explanationPanel.innerHTML = explanationHtml(index, question, paper.answers[index]);
+    renderMath(explanationPanel);
     if (isCorrect) {
       correct += 1;
     } else {
@@ -1817,6 +1835,7 @@ function gradeQuiz() {
     <p>答對 ${correct} 題，共 ${paper.questions.length} 題，換算 ${percent} 分。</p>
     <p>${wrong.length ? `錯題：第 ${wrong.join("、")} 題` : "全部答對，這張很漂亮。"}</p>
   `;
+  renderMath(resultPanel);
   if (!wasGraded) {
     addLeaderboardRecord({
       ...student,
