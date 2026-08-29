@@ -21,6 +21,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", "Segoe UI", sans-serif;
   background: var(--page);
   color: var(--ink);
+  overflow-x: hidden;
 }
 
 .topbar {
@@ -54,7 +55,7 @@ h1 {
 main {
   width: min(920px, 100%);
   margin: 0 auto;
-  padding: 14px 12px 32px;
+  padding: 10px 8px 28px;
 }
 
 .score-pill {
@@ -357,7 +358,8 @@ button:active {
 }
 
 .question {
-  padding: 14px;
+  padding: 12px;
+  min-width: 0;
 }
 
 .question-image-wrap {
@@ -408,15 +410,20 @@ button:active {
 
 .stem {
   margin: 0 0 12px;
-  line-height: 1.8;
-  font-size: 18px;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  line-height: 1.7;
+  font-size: 17px;
   font-weight: 650;
+  overflow-wrap: anywhere;
+  -webkit-overflow-scrolling: touch;
 }
 
 .answer-blank {
   display: inline-block;
-  width: 64px;
-  height: 34px;
+  width: 76px;
+  height: 38px;
   margin-right: 8px;
   vertical-align: middle;
   border: 2px solid var(--line);
@@ -434,6 +441,12 @@ button:active {
   text-align: center;
   line-height: 1.02;
   font-size: 0.92em;
+}
+
+.math-frac > span {
+  display: block;
+  width: auto;
+  min-width: 0;
 }
 
 .math-frac > span:first-child {
@@ -468,14 +481,15 @@ button:active {
 .options {
   display: grid;
   gap: 8px;
+  min-width: 0;
 }
 
 .answer-options {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .center-options {
-  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  grid-template-columns: 1fr;
 }
 
 .option {
@@ -488,6 +502,7 @@ button:active {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: white;
+  min-width: 0;
 }
 
 .option input {
@@ -499,16 +514,18 @@ button:active {
 
 .option span {
   line-height: 1.35;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .center-options .option {
   align-items: center;
 }
 
-.center-options .option span {
+.center-options .option > span {
   width: 100%;
   text-align: center;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 800;
 }
 
@@ -525,7 +542,7 @@ button:active {
   pointer-events: none;
 }
 
-.answer-options .option span {
+.answer-options .option > span {
   font-size: 18px;
   font-weight: 900;
 }
@@ -546,7 +563,7 @@ button:active {
 
 .question-nav {
   display: grid;
-  grid-template-columns: minmax(84px, auto) 1fr minmax(84px, auto);
+  grid-template-columns: minmax(76px, auto) 1fr minmax(76px, auto);
   gap: 8px;
   align-items: center;
   padding: 10px;
@@ -738,5 +755,21 @@ button:active {
 
   .options {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .answer-options {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .center-options {
+    grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  }
+
+  .question {
+    padding: 14px;
+  }
+
+  .stem {
+    font-size: 18px;
   }
 }
