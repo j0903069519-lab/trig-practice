@@ -432,30 +432,38 @@ button:active {
 }
 
 .math-frac {
-  display: inline-grid;
-  grid-template-rows: auto auto;
+  display: inline-flex !important;
+  flex-direction: column;
   align-items: center;
-  min-width: 1.25em;
-  margin: 0 0.08em;
-  vertical-align: -0.34em;
+  justify-content: center;
+  width: max-content !important;
+  max-width: max-content !important;
+  min-width: 1.1em;
+  margin: 0 0.1em;
+  vertical-align: -0.28em;
   text-align: center;
-  line-height: 1.02;
-  font-size: 0.92em;
+  line-height: 0.9;
+  font-size: 0.78em;
 }
 
 .math-frac > span {
-  display: block;
-  width: auto;
-  min-width: 0;
+  display: block !important;
+  width: max-content !important;
+  min-width: 100%;
+  max-width: max-content !important;
+  text-align: center !important;
+  line-height: 0.92 !important;
+  font-size: 1em !important;
+  font-weight: inherit !important;
 }
 
 .math-frac > span:first-child {
-  padding: 0 0.12em 0.08em;
-  border-bottom: 1.5px solid currentColor;
+  padding: 0 0.14em 0.05em;
+  border-bottom: 1.25px solid currentColor;
 }
 
 .math-frac > span:last-child {
-  padding-top: 0.08em;
+  padding-top: 0.05em;
 }
 
 .math-root {
@@ -762,7 +770,7 @@ button:active {
   }
 
   .center-options {
-    grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   }
 
   .question {

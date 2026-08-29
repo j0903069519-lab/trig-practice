@@ -468,7 +468,7 @@ function configureImageExam20260829() {
     ],
     [
       `<span class="answer-blank"></span>設 90°＜θ＜180° 且 sinθ＝${frac("4", "5")}，則下列哪一個選項是正確的？`,
-      [`cosθ＝${frac("3", "5")}`, `cos2θ＝−${frac("24", "25")}`, `cos（270°−θ）＝−${frac("4", "5")}`, `cos${frac("θ", "2")}＝${frac("2", root("5"))}`],
+      [`cosθ＝${frac("3", "5")}`, `cos2θ＝−${frac("24", "25")}`, `cos（270°−θ）＝−${frac("4", "5")}`, `cos（${frac("θ", "2")}）＝${frac("2", root("5"))}`],
       false,
       "",
       { centerOptions: true },
