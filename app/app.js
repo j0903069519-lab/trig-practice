@@ -3,7 +3,7 @@ const leaderboardKey = "trigPracticeLeaderboard";
 const studentKey = "trigPracticeStudent";
 const sharedLeaderboardUrl = "https://script.google.com/macros/s/AKfycbyctoOY03uZKvznm-je5NirX5JZkXixKEhqMc5UgbvEbnKM-AVnY7lS7fz5INjI_tiKig/exec";
 const isArchived = false;
-const activePaperTitlePrefix = "補考練習卷";
+const activePaperTitlePrefix = "高中數學測驗";
 const typeTitles = [
   "第 1 題：直角三角形求 cos",
   "第 2 題：已知 cos 求 tan",
@@ -315,6 +315,7 @@ const state = {
   graded: false,
   typeGraded: false,
   typeQuestions: [],
+  currentQuestionIndex: 0,
   paperScoreText: "尚未批改",
   typeScoreText: "題型練習",
   wrongOnly: false,
@@ -399,6 +400,56 @@ function makeMultiQuestion(stem, correctOptions, distractors) {
     .map((option, index) => correctOptions.includes(option) ? labels[index] : "")
     .join("");
   return { question: [stem, options, true], answer };
+}
+
+function configureImageExam20260829() {
+  const answers = [
+    "B", "E", "A", "A", "C",
+    "D", "C", "C", "C", "E",
+    "E", "E", "E", "B", "C",
+    "BC", "BC", "AB", "CE", "AC",
+    "BD", "BD", "BD", "ACDE", "C",
+  ];
+  const titles = Array.from({ length: 25 }, (_, index) => {
+    const number = index + 1;
+    return `${number <= 15 ? "單選" : "多選"}第 ${number <= 15 ? number : number - 15} 題`;
+  });
+  const builtQuestions = answers.map((answer, index) => {
+    const number = index + 1;
+    const multiple = number > 15;
+    return [
+      "",
+      labels.map((label) => `選項 ${label}`),
+      multiple,
+      `assets/quiz-20260829/q${String(number).padStart(2, "0")}.png`,
+    ];
+  });
+
+  typeTitles.length = 0;
+  typeTitles.push(...titles);
+  papers.length = 0;
+  papers.push({
+    id: "20260829",
+    title: `${activePaperTitlePrefix} 20260829`,
+    answers,
+    questions: builtQuestions,
+  });
+
+  generateQuestion = function generateImageExamPractice(typeIndex) {
+    const index = Math.max(0, Math.min(typeIndex, builtQuestions.length - 1));
+    return {
+      question: builtQuestions[index],
+      answer: answers[index],
+    };
+  };
+
+  explanationSteps = function imageExamExplanationSteps(index) {
+    return [
+      "這題目前先以原卷題圖呈現，請先對照題目中的公式、圖形與選項。",
+      `本題正確答案是 ${answers[index] || ""}。`,
+      "若要做成完整詳解版，下一步可以把每題的計算過程補進這裡，學生批改後就能逐題查看。",
+    ];
+  };
 }
 
 function configureMakeupPractice() {
@@ -1329,7 +1380,9 @@ function normalizeText(value) {
 }
 
 function paperSortValue(paperTitle) {
-  const match = String(paperTitle || "").match(/(?:補考練習卷|練習卷)\s*([A-J])/);
+  const title = String(paperTitle || "");
+  if (title.startsWith("高中數學測驗")) return 0;
+  const match = title.match(/(?:補考練習卷|練習卷)\s*([A-J])/);
   return match ? match[1].charCodeAt(0) - "A".charCodeAt(0) : 999;
 }
 
@@ -1401,10 +1454,19 @@ function renderTypeOptions() {
 
 function renderQuiz() {
   const paper = currentPaper();
+  state.currentQuestionIndex = 0;
   quizForm.innerHTML = paper.questions.map((question, index) => {
-    const [stem, options, multiple] = question;
+    const [stem, options, multiple, imageSrc] = question;
     const type = multiple ? "多選" : "單選";
     const inputType = multiple ? "checkbox" : "radio";
+    const stemHtml = imageSrc
+      ? `
+        <figure class="question-image-wrap">
+          <img class="question-image" src="${escapeHtml(imageSrc)}" alt="第 ${index + 1} 題題目">
+        </figure>
+        ${stem ? `<p class="stem">${stem}</p>` : ""}
+      `
+      : `<p class="stem">${stem}</p>`;
     const optionHtml = options.map((option, optionIndex) => {
       const label = labels[optionIndex];
       return `
@@ -1416,19 +1478,25 @@ function renderQuiz() {
     }).join("");
 
     return `
-      <article class="question" data-question="${index}">
+      <article class="question" data-question="${index}" ${index === state.currentQuestionIndex ? "" : "hidden"}>
         <div class="q-head">
           <span class="q-num">第 ${index + 1} 題</span>
           <span class="q-type">${type}</span>
         </div>
-        <p class="stem">${stem}</p>
+        ${stemHtml}
         <div class="options">${optionHtml}</div>
         <div class="feedback" hidden></div>
         <button class="explanation-toggle" type="button" data-explanation="${index}" hidden>看詳解</button>
         <div class="explanation-panel" hidden></div>
       </article>
     `;
-  }).join("");
+  }).join("") + `
+    <section class="question-nav" aria-label="題目切換">
+      <button type="button" data-question-nav="prev">上一題</button>
+      <span id="questionPageText">第 1 / ${paper.questions.length} 題</span>
+      <button type="button" data-question-nav="next">下一題</button>
+    </section>
+  `;
   if (isArchived) {
     quizForm.querySelectorAll("input").forEach((input) => {
       input.disabled = true;
@@ -1436,11 +1504,12 @@ function renderQuiz() {
   }
   state.graded = false;
   state.wrongOnly = false;
-  showWrongBtn.textContent = "只看錯題";
+  showWrongBtn.textContent = "跳到錯題";
   resultPanel.hidden = true;
   state.paperScoreText = "尚未批改";
   scorePill.textContent = state.paperScoreText;
   updateProgress();
+  updateQuestionPager();
 }
 
 function renderTypePractice() {
@@ -1494,6 +1563,30 @@ function updateProgress() {
   const answered = paper.questions.filter((_, index) => selectedAnswer(index)).length;
   progressText.textContent = `${answered} / ${paper.questions.length} 題`;
   progressFill.style.width = `${Math.round((answered / paper.questions.length) * 100)}%`;
+  updateQuestionPager();
+}
+
+function updateQuestionPager() {
+  const paper = currentPaper();
+  state.currentQuestionIndex = Math.max(0, Math.min(state.currentQuestionIndex, paper.questions.length - 1));
+  quizForm.querySelectorAll("[data-question]").forEach((article) => {
+    article.hidden = Number(article.dataset.question) !== state.currentQuestionIndex;
+  });
+  const pageText = quizForm.querySelector("#questionPageText");
+  if (pageText) {
+    pageText.textContent = `第 ${state.currentQuestionIndex + 1} / ${paper.questions.length} 題`;
+  }
+  const previousButton = quizForm.querySelector('[data-question-nav="prev"]');
+  const nextButton = quizForm.querySelector('[data-question-nav="next"]');
+  if (previousButton) previousButton.disabled = state.currentQuestionIndex === 0;
+  if (nextButton) nextButton.disabled = state.currentQuestionIndex === paper.questions.length - 1;
+}
+
+function goToQuestion(index) {
+  const paper = currentPaper();
+  state.currentQuestionIndex = Math.max(0, Math.min(index, paper.questions.length - 1));
+  updateQuestionPager();
+  quizForm.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function updateTypeProgress() {
@@ -1581,7 +1674,7 @@ function gradeQuiz() {
       }),
     });
   }
-  applyWrongFilter();
+  goToQuestion(wrong.length ? wrong[0] - 1 : 0);
 }
 
 function resetQuiz() {
@@ -1596,10 +1689,11 @@ function resetQuiz() {
   });
   state.graded = false;
   state.wrongOnly = false;
-  showWrongBtn.textContent = "只看錯題";
+  showWrongBtn.textContent = "跳到錯題";
   resultPanel.hidden = true;
   state.paperScoreText = "尚未批改";
   scorePill.textContent = state.paperScoreText;
+  goToQuestion(0);
   updateProgress();
 }
 
@@ -1665,10 +1759,16 @@ function resetTypePractice() {
 }
 
 function applyWrongFilter() {
-  [...quizForm.querySelectorAll(".question")].forEach((article) => {
-    const hide = state.wrongOnly && !article.classList.contains("is-wrong");
-    article.classList.toggle("hidden-by-filter", hide);
-  });
+  const questions = [...quizForm.querySelectorAll(".question")];
+  questions.forEach((article) => article.classList.remove("hidden-by-filter"));
+  if (!state.wrongOnly) {
+    updateQuestionPager();
+    return;
+  }
+  const firstWrong = questions.find((article) => article.classList.contains("is-wrong"));
+  if (firstWrong) {
+    goToQuestion(Number(firstWrong.dataset.question));
+  }
 }
 
 paperSelect.addEventListener("change", () => {
@@ -1686,6 +1786,13 @@ typeModeBtn.addEventListener("click", () => setMode("type"));
 studentForm.addEventListener("input", updateStudentStatus);
 quizForm.addEventListener("change", updateProgress);
 quizForm.addEventListener("click", (event) => {
+  const navButton = event.target.closest("[data-question-nav]");
+  if (navButton) {
+    const direction = navButton.dataset.questionNav;
+    goToQuestion(state.currentQuestionIndex + (direction === "next" ? 1 : -1));
+    return;
+  }
+
   const button = event.target.closest("[data-explanation]");
   if (!button) return;
   const article = button.closest(".question");
@@ -1708,7 +1815,7 @@ showWrongBtn.addEventListener("click", () => {
     if (!state.graded) return;
   }
   state.wrongOnly = !state.wrongOnly;
-  showWrongBtn.textContent = state.wrongOnly ? "顯示全部" : "只看錯題";
+  showWrongBtn.textContent = state.wrongOnly ? "回到目前題目" : "跳到錯題";
   applyWrongFilter();
 });
 clearLeaderboardBtn.addEventListener("click", async () => {
@@ -1720,7 +1827,9 @@ clearLeaderboardBtn.addEventListener("click", async () => {
   await renderLeaderboard([]);
 });
 
-configureMakeupPractice();
+configureImageExam20260829();
+document.querySelector(".mode-tabs").hidden = true;
+typeModeBtn.hidden = true;
 loadStudent();
 renderPaperOptions();
 renderTypeOptions();

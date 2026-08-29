@@ -3,23 +3,23 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>109數學補考練習</title>
+    <title>高中數學線上測驗</title>
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
     <header class="topbar">
       <div>
-        <p class="eyebrow">109 數學</p>
-        <h1>補考練習</h1>
+        <p class="eyebrow">高中數學</p>
+        <h1>線上測驗</h1>
       </div>
       <div class="score-pill" id="scorePill">尚未批改</div>
     </header>
 
     <main>
-      <section class="archive-banner" aria-label="補考練習公告">
-        <p class="eyebrow">補考練習開放</p>
-        <h2>109 數學補考練習</h2>
-        <p>共 10 份練習卷，每份 10 題，可作答、自動批改、查詢紀錄與查看排行榜。</p>
+      <section class="archive-banner" aria-label="測驗公告">
+        <p class="eyebrow">新測驗開放</p>
+        <h2>高中數學線上測驗</h2>
+        <p>一次顯示一題，共 25 題，可作答、自動批改、查詢紀錄與查看排行榜。</p>
       </section>
 
       <section class="student-panel" aria-label="學生資料">
@@ -68,8 +68,8 @@
 
         <section class="progress-wrap" aria-label="作答進度">
           <div class="progress-top">
-            <span id="progressText">0 / 10 題</span>
-            <span id="paperMeta">每卷 10 題</span>
+            <span id="progressText">0 / 25 題</span>
+            <span id="paperMeta">共 25 題</span>
           </div>
           <div class="progress-bar">
             <div id="progressFill"></div>
@@ -80,7 +80,7 @@
 
         <section class="actions">
           <button id="gradeBtn" class="primary" type="button">送出批改</button>
-          <button id="showWrongBtn" type="button">只看錯題</button>
+          <button id="showWrongBtn" type="button">跳到錯題</button>
         </section>
 
         <section id="resultPanel" class="result-panel" hidden></section>

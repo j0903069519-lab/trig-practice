@@ -360,6 +360,21 @@ button:active {
   padding: 14px;
 }
 
+.question-image-wrap {
+  margin: 0 0 12px;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+}
+
+.question-image {
+  display: block;
+  width: min(100%, 920px);
+  min-width: 720px;
+  height: auto;
+}
+
 .question.is-correct {
   border-color: rgba(18, 128, 92, 0.45);
   background: #f0faf6;
@@ -432,6 +447,23 @@ button:active {
   border-top: 1px dashed var(--line);
   font-size: 14px;
   font-weight: 800;
+}
+
+.question-nav {
+  display: grid;
+  grid-template-columns: minmax(84px, auto) 1fr minmax(84px, auto);
+  gap: 8px;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.question-nav span {
+  color: var(--muted);
+  text-align: center;
+  font-weight: 900;
 }
 
 .feedback.good {

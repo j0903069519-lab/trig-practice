@@ -224,7 +224,9 @@ function comparePaperTitle(a, b) {
 }
 
 function paperSortValue(value) {
-  const match = String(value || "").match(/(?:補考練習卷|練習卷)\s*([A-J])/);
+  const title = String(value || "");
+  if (title.startsWith("高中數學測驗")) return 0;
+  const match = title.match(/(?:補考練習卷|練習卷)\s*([A-J])/);
   return match ? match[1].charCodeAt(0) - "A".charCodeAt(0) : 999;
 }
 
