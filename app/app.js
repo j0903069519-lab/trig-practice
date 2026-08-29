@@ -403,6 +403,8 @@ function makeMultiQuestion(stem, correctOptions, distractors) {
 }
 
 function configureImageExam20260829() {
+  const frac = (top, bottom) => `<span class="math-frac"><span>${top}</span><span>${bottom}</span></span>`;
+  const root = (value) => `<span class="math-root">√${value}</span>`;
   const answers = [
     "B", "E", "A", "A", "C",
     "D", "C", "C", "C", "E",
@@ -414,16 +416,173 @@ function configureImageExam20260829() {
     const number = index + 1;
     return `${number <= 15 ? "單選" : "多選"}第 ${number <= 15 ? number : number - 15} 題`;
   });
-  const builtQuestions = answers.map((answer, index) => {
-    const number = index + 1;
-    const multiple = number > 15;
-    return [
+  const builtQuestions = [
+    [
+      `<span class="answer-blank"></span>將 −240° 化為弧度應為何？`,
+      [`${frac("4π", "3")} 弳`, `−${frac("4π", "3")} 弳`, `${frac("3π", "4")} 弳`, `−${frac("3π", "4")} 弳`, `−${frac("5π", "6")} 弳`],
+      false,
       "",
+      { centerOptions: true },
+    ],
+    [
+      `<span class="answer-blank"></span>函數 y＝1＋2 sin［3（x＋4）］的週期為何？`,
+      ["2π", "π", frac("π", "2"), frac("π", "3"), frac("2π", "3")],
+      false,
+      "",
+      { centerOptions: true },
+    ],
+    [
+      `<span class="answer-blank"></span>設 a＝cos1、b＝cos2、c＝sin3、d＝sin4，則何者值最大？`,
+      ["a", "b", "c", "d"],
+      false,
+      "",
+      { centerOptions: true },
+    ],
+    [
+      `<span class="answer-blank"></span>sin136° sin16°－cos44° cos344° 之值為何？`,
+      [`−${frac("1", "2")}`, frac("1", "2"), `−${frac(`${root("3")}`, "2")}`, frac(`${root("3")}`, "2"), frac(`${root("2")}`, "2")],
+      false,
+      "",
+      { centerOptions: true },
+    ],
+    [
+      `<span class="answer-blank"></span>sin70° cos20°－sin20° cos70°＝？`,
+      ["sin90°", "cos90°", "sin50°", "cos50°"],
+      false,
+      "",
+      { centerOptions: true },
+    ],
+    [
+      `<span class="answer-blank"></span>標準位置角 ${frac("7π", "4")} 弳位於下列哪一選項？`,
+      ["第一象限", "第二象限", "第三象限", "第四象限", "x 軸上"],
+      false,
+      "",
+      { centerOptions: true },
+    ],
+    [
+      `<span class="answer-blank"></span>一時速 60 公里之汽車，在某一圓形競技場行駛 20 秒後，汽車對圓心角共旋轉 60°，則此圓形競技場的半徑約為多少公尺？`,
+      ["180 公尺", "300 公尺", "320 公尺", "600 公尺", "640 公尺"],
+      false,
+      "",
+      { centerOptions: true },
+    ],
+    [
+      `<span class="answer-blank"></span>設 90°＜θ＜180° 且 sinθ＝${frac("4", "5")}，則下列哪一個選項是正確的？`,
+      [`cosθ＝${frac("3", "5")}`, `cos2θ＝−${frac("24", "25")}`, `cos（270°−θ）＝−${frac("4", "5")}`, `cos${frac("θ", "2")}＝${frac("2", root("5"))}`],
+      false,
+      "",
+      { centerOptions: true },
+    ],
+    [
+      `<span class="answer-blank"></span>如圖，將一個半徑為 10，圓心角為 252° 的扇形的兩半徑對齊黏合，可形成下列哪個圓錐？<figure class="inline-figure wide-figure"><img src="assets/quiz-20260829/fig09.png" alt="第 9 題圓錐選項圖"></figure>`,
       labels.map((label) => `選項 ${label}`),
-      multiple,
-      `assets/quiz-20260829/q${String(number).padStart(2, "0")}.png`,
-    ];
-  });
+      false,
+      "",
+      { centerOptions: true, answerOnly: true },
+    ],
+    [
+      `<span class="answer-blank"></span>下列哪一個數值最小？`,
+      ["sin1", "sin2", "sin3", "sin4", "sin5"],
+      false,
+      "",
+      { centerOptions: true },
+    ],
+    [
+      `<span class="answer-blank"></span>∠A＋∠B＝135°，則（1－tanA）（1－tanB）＝`,
+      ["−2", "−1", "0", "1", "2"],
+      false,
+      "",
+      { centerOptions: true },
+    ],
+    [
+      `<span class="answer-blank"></span>對於一個角的大小，我們可以用「弳」與「度」表示。請問下列五個選項中哪一個值最小？`,
+      ["sin1°", "cos2", "cos3", "tan4°", "tan5"],
+      false,
+      "",
+      { centerOptions: true },
+    ],
+    [
+      `<span class="answer-blank"></span>廣義角 θ 為第二象限角，且 sinθ＝${frac("3", "5")}，試問下列選項何者正確？`,
+      [`cosθ＝${frac("4", "5")}`, `tanθ＝±${frac("3", "4")}`, `sin${frac("θ", "2")}＝−${frac(`3${root("10")}`, "10")}`, `cos${frac("θ", "2")}＝${frac(root("10"), "10")}`, `tan${frac("θ", "2")}＝3`],
+      false,
+      "",
+      { centerOptions: true },
+    ],
+    [
+      `<span class="answer-blank"></span>設 △ABC 為直角三角形，已知 0°＜∠A＜45°，∠C＝90°，且兩內角 A，B 滿足 cosAcosB＋sinAsinB＋sinAcosA＝${frac("6", "5")}，則 tanA 之值為何？`,
+      ["0", frac("1", "2"), frac("3", "5"), "1", frac("6", "5")],
+      false,
+      "",
+      { centerOptions: true },
+    ],
+    [
+      `<span class="answer-blank"></span>已知兩個函數 f（x）＝｜sinx｜＋｜cosx｜，g（x）＝｜sinx｜－｜cosx｜，其中 x 為任意實數。設 f（x）的最小正週期為 p，g（x）的最小正週期為 q，則 p＋q 之值為何？`,
+      [frac("π", "2"), "π", frac("3π", "2"), "2π", frac("5π", "2")],
+      false,
+      "",
+      { centerOptions: true },
+    ],
+    [
+      `<span class="answer-blank"></span>下列各函數的週期，何者為 π？`,
+      ["y＝sinx", "y＝tanx", "y＝cos2x＋5", "y＝3 sinx", "y＝sin3x"],
+      true,
+      "",
+      { centerOptions: true },
+    ],
+    [
+      `<span class="answer-blank"></span>關於函數 f（x）＝4sin（2x＋${frac("π", "6")}）＋5，請選出正確的選項。`,
+      [`f（x）的週期為 4π`, `y＝f（x）的圖形對稱於鉛直線 x＝−${frac("π", "3")}`, `y＝f（x）的圖形與 y 軸的交點坐標為（0，7）`, `若 0≤x≤2π，則 y＝f（x）的圖形與水平線 y＝2 有 3 個交點`, `函數 y＝4 sin2x 的圖形向左平移 ${frac("π", "6")} 單位，再向上平移 5 單位可得 y＝f（x）的圖形`],
+      true,
+    ],
+    [
+      `<span class="answer-blank"></span>下列各選項中，哪些的值等於 ${frac("1", "2")}？`,
+      ["sin（−210°）", "2 sin15°cos15°", "4 cos³40°－3 cos40°", "1－2 sin²22.5°", frac("2 tan75°", "1－tan²75°")],
+      true,
+      "",
+      { centerOptions: true },
+    ],
+    [
+      `<span class="answer-blank"></span>下列哪些選項正確？`,
+      ["sinπ＞sinπ°", "cosπ＞cosπ°", "cosπ°＞sinπ°", "tanπ＞tanπ°", "π°＜π"],
+      true,
+      "",
+      { centerOptions: true },
+    ],
+    [
+      `<span class="answer-blank"></span>遊樂區中有一圓形摩天輪，中心軸高 22 公尺，直徑 40 公尺，逆時針方向運轉一圈需時 15 分鐘。當摩天輪開始運轉時，阿美恰坐在離地最近的位置上，x 分鐘後，阿美離地的高度可表為 y＝a sin（bx＋c）＋d，a＞0 且 b＞0。試問下列選項有哪些是正確的？`,
+      ["a＝20", "a＝40", `b＝${frac("2π", "15")}`, "c＝0", "d＝2"],
+      true,
+      "",
+      { centerOptions: true },
+    ],
+    [
+      `<span class="answer-blank"></span>關於函數 f（x）＝4sin（2x－${frac("π", "6")}）－3，請選出正確的選項。`,
+      [`f（x）的週期為 4π`, `f（x）的振幅為 4`, `y＝f（x）的圖形與 y 軸的交點坐標為（0，1）`, `若 0≤x≤2π，則 y＝f（x）的圖形與 x 軸有 4 個交點`, `函數 y＝4 sin2x 向右平移 ${frac("π", "6")} 單位，再向下平移 3 單位可得 y＝f（x）的圖形`],
+      true,
+    ],
+    [
+      `<span class="answer-blank"></span>關於三角函數的值，下列敘述哪些正確？`,
+      ["sin1°＞sin2°＞sin3°", "cos1°＞cos2°＞cos3°", "sin1＞sin2＞sin3", "cos1＞cos2＞cos3", "tan1＞tan2＞tan3"],
+      true,
+    ],
+    [
+      `<span class="answer-blank"></span>關於三角函數的值，下列敘述哪些正確？`,
+      ["sin1°＞sin2°＞sin3°", "cos1°＞cos2°＞cos3°", "sin1＞sin2＞sin3", "cos1＞cos2＞cos3", "tan1＞tan2＞tan3"],
+      true,
+    ],
+    [
+      `<span class="answer-blank"></span>附圖為三角函數 y＝3 sin（ax－b）的部分圖形，其中 a＞0，則下列各項敘述何者正確？<figure class="inline-figure"><img src="assets/quiz-20260829/fig24.png" alt="第 24 題函數圖形"></figure>`,
+      ["B（0，−3）", `b＝${frac("π", "6")}`, `C（${frac("5π", "6")}，0）`, `y 的週期為 ${frac("2π", "3")}`, `其圖形可由 y＝3sin3x 向右平移 ${frac("π", "6")} 而得`],
+      true,
+    ],
+    [
+      `<span class="answer-blank"></span>若 sinθ＞0，則下列何者正確？`,
+      [`sin${frac("θ", "2")}＞0`, `cos${frac("θ", "2")}＞0`, `tan${frac("θ", "2")}＞0`, "cos2θ＞0", "tan2θ＞0"],
+      true,
+      "",
+      { centerOptions: true },
+    ],
+  ];
 
   typeTitles.length = 0;
   typeTitles.push(...titles);
@@ -1129,7 +1288,7 @@ function explanationHtml(index, question, answer) {
     .join("");
   return `
     <h3>詳解算法</h3>
-    <p>正確答案：${escapeHtml(correctText)}</p>
+    <p>正確答案：${correctText}</p>
     <ol>${steps}</ol>
   `;
 }
@@ -1456,7 +1615,7 @@ function renderQuiz() {
   const paper = currentPaper();
   state.currentQuestionIndex = 0;
   quizForm.innerHTML = paper.questions.map((question, index) => {
-    const [stem, options, multiple, imageSrc] = question;
+    const [stem, options, multiple, imageSrc, display = {}] = question;
     const type = multiple ? "多選" : "單選";
     const inputType = multiple ? "checkbox" : "radio";
     const stemHtml = imageSrc
@@ -1469,10 +1628,11 @@ function renderQuiz() {
       : `<p class="stem">${stem}</p>`;
     const optionHtml = options.map((option, optionIndex) => {
       const label = labels[optionIndex];
+      const optionText = imageSrc || display.answerOnly ? label : `(${label}) ${option}`;
       return `
         <label class="option">
           <input type="${inputType}" name="q${index}" value="${label}">
-          <span>(${label}) ${option}</span>
+          <span>${optionText}</span>
         </label>
       `;
     }).join("");
@@ -1484,7 +1644,7 @@ function renderQuiz() {
           <span class="q-type">${type}</span>
         </div>
         ${stemHtml}
-        <div class="options">${optionHtml}</div>
+        <div class="options ${imageSrc ? "answer-options" : ""} ${display.centerOptions ? "center-options" : ""}">${optionHtml}</div>
         <div class="feedback" hidden></div>
         <button class="explanation-toggle" type="button" data-explanation="${index}" hidden>看詳解</button>
         <div class="explanation-panel" hidden></div>

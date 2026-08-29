@@ -362,7 +362,7 @@ button:active {
 
 .question-image-wrap {
   margin: 0 0 12px;
-  overflow-x: auto;
+  overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: white;
@@ -370,8 +370,7 @@ button:active {
 
 .question-image {
   display: block;
-  width: min(100%, 920px);
-  min-width: 720px;
+  width: 100%;
   height: auto;
 }
 
@@ -409,13 +408,74 @@ button:active {
 
 .stem {
   margin: 0 0 12px;
-  line-height: 1.55;
-  font-size: 16px;
+  line-height: 1.8;
+  font-size: 18px;
+  font-weight: 650;
+}
+
+.answer-blank {
+  display: inline-block;
+  width: 64px;
+  height: 34px;
+  margin-right: 8px;
+  vertical-align: middle;
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.math-frac {
+  display: inline-grid;
+  grid-template-rows: auto auto;
+  align-items: center;
+  min-width: 1.25em;
+  margin: 0 0.08em;
+  vertical-align: -0.34em;
+  text-align: center;
+  line-height: 1.02;
+  font-size: 0.92em;
+}
+
+.math-frac > span:first-child {
+  padding: 0 0.12em 0.08em;
+  border-bottom: 1.5px solid currentColor;
+}
+
+.math-frac > span:last-child {
+  padding-top: 0.08em;
+}
+
+.math-root {
+  white-space: nowrap;
+}
+
+.inline-figure {
+  margin: 10px auto 12px;
+  text-align: center;
+}
+
+.inline-figure img {
+  display: block;
+  width: min(100%, 360px);
+  height: auto;
+  margin: 0 auto;
+}
+
+.inline-figure.wide-figure img {
+  width: min(100%, 720px);
 }
 
 .options {
   display: grid;
   gap: 8px;
+}
+
+.answer-options {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.center-options {
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
 }
 
 .option {
@@ -439,6 +499,41 @@ button:active {
 
 .option span {
   line-height: 1.35;
+}
+
+.center-options .option {
+  align-items: center;
+}
+
+.center-options .option span {
+  width: 100%;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.answer-options .option {
+  grid-template-columns: 1fr;
+  place-items: center;
+  min-height: 46px;
+  padding: 8px 4px;
+}
+
+.answer-options .option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.answer-options .option span {
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.answer-options .option:has(input:checked) {
+  border-color: var(--accent);
+  background: #eef7f5;
+  color: var(--accent-strong);
 }
 
 .feedback {
