@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>建中 109 上・數學 3B 第一次月考｜線上測驗</title>
+<meta name="description" content="建國中學109學年度高二數學3B第一次月考，15題線上作答，沿用體育班成績紀錄。">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="ck109.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script defer src="ck109-data.js"></script><script defer src="ck109.js"></script>
+</head>
+<body>
+<header class="topbar"><div><p class="eyebrow">高中數學・線上測驗</p><h1>建中 109 上第一次月考</h1></div><span id="scorePill" class="score-pill">尚未交卷</span></header>
+<main>
+<section class="exam-intro"><a href="index.html">← 回原本的練習卷</a><p>高二數學 3B｜15 題・100 分</p><details><summary>作答與計分方式</summary><p>單選 4 題，每題 6 分；多選 2 題，每題 11 分，每錯一個選項扣 3 分，未作答或錯 4 個以上選項得 0 分；填充 9 題，每題 6 分。</p><p>不用登入。填寫班級、座號、姓名後交卷，成績與錯題會送到原本的成績表。交卷後可查看參考答案與解析。</p></details></section>
+<section class="student-panel" aria-label="學生資料"><div class="section-head"><h2>作答資料</h2><span id="studentStatus" class="status-chip">尚未填寫</span></div><form id="studentForm" class="student-form"><label>班級<input id="classInput" maxlength="40" required placeholder="例：體育一甲" autocomplete="organization"></label><label>座號<input id="seatInput" maxlength="20" required placeholder="例：12" inputmode="numeric"></label><label>姓名<input id="nameInput" maxlength="40" required placeholder="請輸入姓名" autocomplete="name"></label></form><p id="draftNotice" class="query-status" role="status"></p></section>
+<section class="progress-wrap"><div class="progress-top"><span id="progressText">0 / 15 題</span><span>滿分 100 分</span></div><div class="progress-bar"><div id="progressFill"></div></div><nav id="questionMap" aria-label="選擇題號"></nav></section>
+<form id="quizForm" class="quiz"></form>
+<div class="question-nav"><button id="previous" type="button">上一題</button><span id="pageText"></span><button id="next" type="button">下一題</button></div>
+<p id="examError" class="notice" role="alert" hidden></p>
+<section class="actions"><button id="submitExam" class="primary" type="button">交卷並批改</button><button id="reviewMissing" type="button">檢查未答題</button></section>
+<section id="resultPanel" class="result-panel" aria-live="polite" hidden></section>
+<section class="student-panel"><div class="section-head"><h2>我的交卷紀錄</h2><button id="queryRecords" type="button">查詢紀錄</button></div><p id="recordStatus" role="status">填寫班級與座號，即可查詢這份試卷的交卷紀錄。</p><div id="recordList"></div></section>
+<p class="exam-footer">試題來源：建國中學 109 學年度第一學期・高二 3B 第一次月考</p>
+</main>
+<dialog id="submitDialog"><form method="dialog"><h2>確認交卷</h2><p id="submitSummary"></p><p>交卷後會顯示解析，這次作答將鎖定。</p><div class="dialog-actions"><button value="cancel">繼續作答</button><button value="submit" class="primary">確認交卷</button></div></form></dialog>
+<dialog id="resetDialog"><form method="dialog"><h2>開始新的作答？</h2><p>本機草稿會清除，已送出的成績會保留。</p><div class="dialog-actions"><button value="cancel">取消</button><button value="reset" class="primary">重新作答</button></div></form></dialog>
+</body></html>
