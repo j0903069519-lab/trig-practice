@@ -5,7 +5,7 @@
   <meta name="theme-color" content="#0f766e">
   <meta name="description" content="丹鳳高中高一體育班數學第一次段考練習：十份練習卷、題型補強、逐步詳解與錯題重練。">
   <title>高一體育班｜數學段考練習</title>
-  <link rel="stylesheet" href="vendor/katex.min.css"><link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="vendor/katex.min.css"><link rel="stylesheet" href="styles.css?v=20261007-title">
   <script defer src="vendor/katex.min.js"></script><script defer src="vendor/auto-render.min.js"></script>
   <script defer src="app.js"></script>
 </head>
@@ -13,7 +13,7 @@
 <a class="skip-link" href="#workspace">跳到練習題</a>
 <header class="topbar"><div class="brand"><span class="brand-mark" aria-hidden="true">數</span><div><p>丹鳳高中・高一體育班</p><h1>第一次段考練習</h1></div></div><div class="header-score" id="headerScore">準備開始</div></header>
 <main>
-  <section class="intro"><div><p class="eyebrow">115 學年度・第一學期</p><h2>練一次，多懂一點。</h2><p>先試著作答，再跟著詳解把每一步弄清楚。</p></div><div class="intro-meta"><span>10 份練習卷</span><span>25 種題型</span><span>逐步詳解</span></div></section>
+  <section class="intro practice-intro"><div><p class="eyebrow">115 學年度・第一學期</p><h2>高一數學段考練習</h2><p>選一份練習卷，作答後查看逐步詳解。</p></div><div class="intro-meta"><span>10 份練習卷</span><span>25 種題型</span><span>逐步詳解</span></div></section>
   <section class="student-panel panel"><div class="section-head"><h2>作答資料</h2><span id="studentStatus" class="muted">練習卷交卷前需填寫</span></div><form id="studentForm"><label>班級<input id="className" maxlength="20" placeholder="例：體育一甲" autocomplete="organization" required></label><label>座號<input id="seatNumber" maxlength="3" inputmode="numeric" pattern="[0-9]{1,3}" placeholder="例：12" required></label><label>姓名<input id="studentName" maxlength="30" placeholder="請輸入姓名" autocomplete="name" required></label></form><div class="student-footer"><p>本機自動記住資料與尚未完成的作答。</p><button class="text-button" id="recordsButton" type="button">我的作答紀錄 ↗</button></div></section>
   <nav class="mode-tabs" aria-label="練習模式"><button id="paperTab" class="active" aria-selected="true" type="button">完整考卷<span>25 題・100 分</span></button><button id="typeTab" aria-selected="false" type="button">題型練習<span>一次補強 5 題</span></button></nav>
   <section id="workspace" tabindex="-1">
