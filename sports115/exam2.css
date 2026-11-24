@@ -17,3 +17,51 @@ body .option.correct-option{border:2px solid #222}body .option.wrong-choice{bord
 .self-check button[aria-pressed=true]{background:#222;color:white}
 .sketch .coordinate-figure{width:250px;cursor:crosshair;touch-action:manipulation}
 .sketch{width:fit-content}.skill-nav{margin-bottom:2rem}
+
+.question-pager{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin:.6rem 0;font-variant-numeric:tabular-nums}
+.question-pager button,.paper-export{min-height:40px;padding:.45rem .85rem}
+.paper-export{display:inline-flex;align-items:center;color:inherit;text-decoration:none;border:1px solid #aaa;border-radius:6px;font-size:.9rem}
+.paper-export[hidden]{display:none}.jump-list{margin-top:.4rem}.question-nav [aria-current=step]{outline:2px solid currentColor;outline-offset:-2px}
+#quizForm,#skillBody{touch-action:pan-y pinch-zoom}
+#workspace .submit-bar{position:static;margin:8px 0}
+#skillBody{margin:8px 0}#skillBody h2{margin:.4rem 0;font-size:1.1rem}#skillBody .skill-prompt{margin:.4rem 0}
+#skillBody .skill-example{margin:.4rem 0 .7rem}
+#quizForm .graph-options{grid-template-columns:repeat(5,minmax(0,1fr))}
+#quizForm .graph-options .option{flex-wrap:wrap;justify-content:center;gap:3px;padding:5px}
+#quizForm .graph-options .option:last-child{grid-column:auto}
+.graph-options .option-content{width:100%}.graph-options .coordinate-figure{width:100%;max-width:145px;margin:auto}
+@media(max-width:700px){
+  #quizForm .question,#skillBody .question{padding:12px;margin-bottom:6px}
+  #quizForm .stem{line-height:1.5;margin-bottom:8px}
+  #quizForm .q-head{margin-bottom:6px}
+  #quizForm .option{min-height:41px;padding:5px 8px;line-height:1.4}
+  #quizForm .options{gap:5px}
+  #quizForm .graph-options{grid-template-columns:repeat(3,minmax(0,1fr))}
+  #quizForm .graph-options .option{padding:2px}
+  #quizForm .graph-options .coordinate-figure{max-height:105px}
+  .question-pager{font-size:.9rem}
+}
+#questionPager{scroll-margin-top:78px}
+@media(max-width:700px){
+  #quizForm .short-options{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #quizForm .graph-options{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:700px) and (max-height:740px){
+  #quizForm .graph-options .coordinate-figure{max-height:97px}
+  #quizForm .hint{margin-top:6px}
+  #skillBody .coordinate-figure{width:120px}
+  #skillBody .sketch .coordinate-figure{width:170px}
+  #skillBody .question h3{font-size:1rem}
+  #skillBody .question p{margin:.35rem 0}
+  #skillBody .self-check{margin:.4rem 0;padding:.35rem .7rem}
+  #skillBody .sketch-notes{margin:.4rem 0}
+}
+.question-pager button{white-space:nowrap;flex:none}
+.question-pager span{text-align:center}
+.drawing-tools,.drawing-tools label{display:flex;align-items:center;gap:8px}
+.drawing-tools{gap:1rem}.drawing-tools input[type=checkbox]{width:18px;min-height:18px;height:18px}
+@media(max-width:400px){
+  .question-pager button{padding:.35rem .5rem}
+  .question-pager span{font-size:.82rem}
+  #skillBody .skill-example{padding:.35rem .7rem}
+}

@@ -16,8 +16,9 @@
     return;
   }
   let index=Number.isInteger(saved.index)&&skills[saved.index]?saved.index:0;
+  let itemIndex=Number.isInteger(saved.itemIndex)&&saved.itemIndex>=0&&saved.itemIndex<3?saved.itemIndex:0;
   function save(){
-    try {localStorage.setItem(storageKey,JSON.stringify({index,answers}));}
+    try {localStorage.setItem(storageKey,JSON.stringify({index,itemIndex,answers}));}
     catch {$('saveNotice').textContent='這台裝置無法儲存進度，請先保留頁面。';}
   }
   function key(i){return skills[index].number+'-'+i;}
@@ -30,8 +31,8 @@
     const s=state(i),points=s.points||[];
     const spec=points.length===2?{points,closed:!s.dashed}:{boundary:[1,0,15],closed:true};
     return `<div class="sketch" data-grid="${i}" aria-label="作圖方格">${coordinateFigure(spec)}</div>
-      <p>在兩個格點各點一下畫直線，也可在作答欄寫下兩點。${points.length?' 已選 '+points.map(p=>'('+p.join(',')+')').join('、'):''}</p>
-      <label><input type="checkbox" data-dash="${i}" ${s.dashed?'checked':''}> 虛線</label> <button type="button" data-clear="${i}">重畫</button>`;
+      <p>點兩個格點畫直線。${points.length?' 已選 '+points.map(p=>'('+p.join(',')+')').join('、'):''}</p>
+      <div class="drawing-tools"><label><input type="checkbox" data-dash="${i}" ${s.dashed?'checked':''}> 虛線</label> <button type="button" data-clear="${i}">重畫</button></div>`;
   }
   function sketch(i){$('sketch-'+i).innerHTML=graphEditor(i);}
   function render(){
@@ -39,28 +40,32 @@
     $('unit').value=skill.section;
     $('skill').replaceChildren(...skills.filter(s=>s.section===skill.section).map(s=>new Option('第 '+s.number+' 項',s.number)));
     $('skill').value=skill.number;
-    $('skillBody').innerHTML=`<h2>技巧 ${skill.number}</h2><p class="skill-prompt">${esc(skill.prompt)}</p>
-      <details class="skill-example" open><summary>講義例題</summary><p>${esc(skill.example)}</p>${coordinateFigure(skill.exampleGraph)}</details>`+
-      skill.items.map((item,i)=>{
+    $('skillBody').innerHTML=`<h2 class="skill-prompt">${esc(skill.prompt)}</h2>
+      <details class="skill-example"><summary>講義例題</summary><p>${esc(skill.example)}</p>${coordinateFigure(skill.exampleGraph)}</details>`+
+      ((item,i)=>{
         const s=state(i);
         return `<article class="question" data-item="${i}"><h3>練習（${i+1}）</h3><p>${esc(item.text)}</p>${coordinateFigure(item.graph)}
         ${skill.number===36?`<div id="sketch-${i}">${graphEditor(i)}</div>`:''}
-        <label class="work-label">我的作答<textarea rows="2" data-answer="${i}" maxlength="1500">${esc(s.text)}</textarea></label>
+        ${skill.number===36?'<details class="sketch-notes"><summary>用文字作答</summary>':''}<label class="work-label">我的作答<textarea rows="2" data-answer="${i}" maxlength="1500">${esc(s.text)}</textarea></label>${skill.number===36?'</details>':''}
         <details class="self-check" data-check="${i}" ${s.revealed?'open':''}><summary>核對講義答案</summary><p>${esc(item.answer)}</p>${coordinateFigure(item.answerGraph)}
         <div aria-label="自評"><button type="button" data-mark="done" aria-pressed="${s.mark==='done'}">已掌握</button>
         <button type="button" data-mark="again" aria-pressed="${s.mark==='again'}">再練一次</button></div></details></article>`;
-      }).join('');
+      })(skill.items[itemIndex],itemIndex);
     renderMathInElement($('skillBody'),{delimiters:[{left:'$',right:'$',display:false}],throwOnError:false});
-    $('prev').disabled=index===0;
-    $('next').disabled=index===skills.length-1;
+    $('pagePosition').textContent=`技巧 ${skill.number}・第 ${itemIndex+1} / 3 題`;
+    $('prev').disabled=index===0&&itemIndex===0;
+    $('next').disabled=index===skills.length-1&&itemIndex===2;
     progress();
   }
-  function go(n){index=n;save();render();}
+  function go(n,item=0){index=n;itemIndex=item;save();render();alignQuestionPager();}
+  function turnPage(direction){
+    const next=index*3+itemIndex+direction;
+    if(next>=0&&next<skills.length*3)go(Math.floor(next/3),next%3);
+  }
   $('unit').replaceChildren(...[...new Set(skills.map(s=>s.section))].map(s=>new Option(s,s)));
   $('unit').onchange=()=>go(skills.findIndex(s=>s.section===$('unit').value));
   $('skill').onchange=()=>go(Number($('skill').value)-1);
-  $('prev').onclick=()=>{go(index-1);$('unit').scrollIntoView({block:'center'});};
-  $('next').onclick=()=>{go(index+1);$('unit').scrollIntoView({block:'center'});};
+  bindQuestionPager($('skillBody'),$('prev'),$('next'),turnPage);
   $('skillBody').addEventListener('input',e=>{
     if(e.target.matches('[data-answer]')){state(e.target.dataset.answer).text=e.target.value;save();}
     if(e.target.matches('[data-dash]')){const i=e.target.dataset.dash;state(i).dashed=e.target.checked;save();sketch(i);}
