@@ -1,12 +1,16 @@
 'use strict';
 (() => {
   const $ = id => document.getElementById(id);
-  const KEY = 'df-sports115-v1';
+  const LEGACY_KEY = 'df-sports115-v1';
+  const KEY = 'df-sports115-exam2-v1';
   const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const fmt = n => Number(n).toLocaleString('zh-TW', {maximumFractionDigits:1});
   const storage = {get(k, fallback) {try {return JSON.parse(localStorage.getItem(KEY+k)) ?? fallback;} catch {return fallback;}},set(k,v) {try {localStorage.setItem(KEY+k,JSON.stringify(v));return true;} catch {return false;}}};
   const uuid = () => crypto.randomUUID();
-  const device = storage.get('-device',null) || uuid()+uuid(); storage.set('-device',device);
+  function legacy(k,fallback) {
+    try {return JSON.parse(localStorage.getItem(LEGACY_KEY+k)) ?? fallback;} catch {return fallback;}
+  }
+  const device = storage.get('-device',null) || legacy('-device',null) || uuid()+uuid(); storage.set('-device',device);
   let bank, sessions = storage.get('-sessions',{}), mode='paper', paperId='A', typeId=1, session, onlyWrong=false;
   let sendBusy=false, history=storage.get('-history',[]), sendStatuses=storage.get('-send',{});
   const API = (window.SPORTS_CONFIG?.API_BASE || '').replace(/\/$/,'');
@@ -34,7 +38,7 @@
   function renderQuestion(q,index) {
     const selected=session.answers[q.id]||'',points=score(q,selected),state=session.graded?(points===40?'is-correct':points>0?'is-partial':'is-wrong'):'';
     const long=q.multi||q.options.some(o=>o.text.length>65);
-    return `<article class="question ${state} ${long?'long-options':''}" id="question-${q.id}" data-id="${q.id}" ${session.graded&&onlyWrong&&points===40?'hidden':''}><div class="q-head"><div class="q-number"><b>${index+1}</b><span>${esc(q.title)}</span></div><span class="q-type">${q.multi?'多選題':'單選題'}・4 分</span></div><p class="stem">${esc(q.stem)}</p><div class="options" role="group" aria-label="第 ${index+1} 題選項">${q.options.map(o=>`<label class="option ${session.graded&&o.correct?'correct-option':''} ${session.graded&&selected.includes(o.id)&&!o.correct?'wrong-choice':''}"><input type="${q.multi?'checkbox':'radio'}" name="answer-${q.id}" value="${o.id}" aria-label="第 ${index+1} 題選項 ${o.id}" ${selected.includes(o.id)?'checked':''} ${session.graded?'disabled':''}><span class="option-letter">${o.id}</span><span class="option-content">${esc(o.text)}</span></label>`).join('')}</div>${session.graded?`<div class="feedback ${points===40?'':points>0?'partial':'bad'}"><div><strong>${points===40?'答對了':points>0?'部分答對，再看看漏選或錯選的地方':'跟著詳解再想一次'}</strong><div class="answer-meta">你的答案：${selected||'未作答'}　正確答案：${q.answer}</div></div><span>${fmt(points/10)} / 4 分</span></div>${solution(q)}`:`<details class="hint"><summary>需要提示？先看觀念</summary><p>${esc(q.hint)}</p></details>`}</article>`;
+    return `<article class="question ${state} ${long?'long-options':''}" id="question-${q.id}" data-id="${q.id}" ${session.graded&&onlyWrong&&points===40?'hidden':''}><div class="q-head"><div class="q-number"><b>${index+1}</b><span>${esc(q.title)}</span></div><span class="q-type">${q.multi?'多選題':'單選題'}・4 分</span></div><p class="stem">${esc(q.stem)}</p><div class="options" role="group" aria-label="第 ${index+1} 題選項">${q.options.map(o=>`<label class="option ${session.graded&&o.correct?'correct-option':''} ${session.graded&&selected.includes(o.id)&&!o.correct?'wrong-choice':''}"><input type="${q.multi?'checkbox':'radio'}" name="answer-${q.id}" value="${o.id}" aria-label="第 ${index+1} 題選項 ${o.id}" ${selected.includes(o.id)?'checked':''} ${session.graded?'disabled':''}><span class="option-letter">${o.id}</span><span class="option-content">${o.graph?coordinateFigure(o.graph):esc(o.text)}</span></label>`).join('')}</div>${session.graded?`<div class="feedback ${points===40?'':points>0?'partial':'bad'}"><div><strong>${points===40?'答對了':points>0?'部分答對，再看看漏選或錯選的地方':'跟著詳解再想一次'}</strong><div class="answer-meta">你的答案：${selected||'未作答'}　正確答案：${q.answer}</div></div><span>${fmt(points/10)} / 4 分</span></div>${solution(q)}`:`<details class="hint"><summary>需要提示？先看觀念</summary><p>${esc(q.hint)}</p></details>`}</article>`;
   }
   function render() {
     $('paperTab').classList.toggle('active',mode==='paper');$('typeTab').classList.toggle('active',mode!=='paper');$('paperTab').setAttribute('aria-selected',String(mode==='paper'));$('typeTab').setAttribute('aria-selected',String(mode!=='paper'));
@@ -56,9 +60,9 @@
   async function api(path,options={}) {const headers={'Content-Type':'application/json','Authorization':`Bearer ${device}`,...options.headers};const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),12000);try {const res=await fetch(API+path,{...options,headers,signal:controller.signal});let data;try {data=await res.json();}catch {throw Error('成績服務暫時無法使用');}if(!res.ok)throw Error(data.error||'成績服務暫時無法使用');return data;}finally{clearTimeout(timer);}}
   async function sendAttempt(s) {
     if(sendBusy||sendStatuses[s.attemptId]?.state==='sent')return;
-    const record=history.find(r=>r.attemptId===s.attemptId);if(!record||record.mode!=='paper')return;
+    const record=history.find(r=>r.attemptId===s.attemptId)||s;if(!record||record.mode!=='paper')return;
     sendBusy=true;sendStatuses[s.attemptId]={state:'sending'};renderResult();
-    try {const res=await api('/api/attempts',{method:'POST',body:JSON.stringify({attemptId:s.attemptId,version:bank.version,paperId:record.paperId,student:record.student,answers:record.answers,startedAt:record.startedAt,finishedAt:record.finishedAt})});sendStatuses[s.attemptId]={state:'sent',serverId:res.id};record.sent=true;storage.set('-history',history);if(s.attemptId===session.attemptId)loadLeaderboard();}
+    try {const res=await api('/api/attempts',{method:'POST',body:JSON.stringify({attemptId:s.attemptId,version:record.version||bank.version,paperId:record.paperId,student:record.student,answers:record.answers,startedAt:record.startedAt,finishedAt:record.finishedAt})});sendStatuses[s.attemptId]={state:'sent',serverId:res.id};record.sent=true;storage.set('-history',history);if(s.attemptId===session.attemptId)loadLeaderboard();}
     catch(e){sendStatuses[s.attemptId]={state:'error'};}
     finally {sendBusy=false;storage.set('-send',sendStatuses);if(s.attemptId===session.attemptId)renderResult();}
   }
@@ -67,23 +71,24 @@
     if(session.graded)return;
     if(mode==='paper'&&!$('studentForm').reportValidity()) {$('studentForm').scrollIntoView({behavior:'smooth',block:'center'});return;}
     const unanswered=session.ids.filter(id=>!session.answers[id]);if(unanswered.length&&!confirm(`還有 ${unanswered.length} 題未作答，未答會得 0 分。確定交卷嗎？`))return;
-    session.graded=true;session.finishedAt=new Date().toISOString();session.student=student();const result=grading();const record={attemptId:session.attemptId,mode,paperId:mode==='paper'?paperId:null,title:session.title,ids:[...session.ids],answers:{...session.answers},student:{...session.student},startedAt:session.startedAt,finishedAt:session.finishedAt,score:result.points,max:result.max,wrong:result.wrong};
+    session.graded=true;session.finishedAt=new Date().toISOString();session.student=student();const result=grading();const record={version:bank.version,attemptId:session.attemptId,mode,paperId:mode==='paper'?paperId:null,title:session.title,ids:[...session.ids],answers:{...session.answers},student:{...session.student},startedAt:session.startedAt,finishedAt:session.finishedAt,score:result.points,max:result.max,wrong:result.wrong};
     if(!history.some(r=>r.attemptId===record.attemptId)){history.unshift(record);history=history.slice(0,300);storage.set('-history',history);}persist();render();$('resultPanel').scrollIntoView({behavior:'smooth',block:'start'});if(mode==='paper')sendAttempt(session);
   }
   function saveStudent() {const s=student();storage.set('-student',s);$('studentStatus').textContent=s.className&&s.seatNumber&&s.studentName?'資料已記住':'練習卷交卷前需填寫';}
   function downloadFile(text,name,type='text/plain;charset=utf-8') {const url=URL.createObjectURL(new Blob([text],{type}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
   function downloadAttempt() {const r=grading();const lines=[session.title,`${session.student?.className||''} ${session.student?.seatNumber||''} 號 ${session.student?.studentName||''}`,`得分：${fmt(r.points)} / ${r.max}`,`時間：${session.finishedAt}`,...r.items.map((item,i)=>{const q=question(item.id);return `第 ${i+1} 題 ${q.title}：作答 ${item.selected||'未答'}，正解 ${q.answer}，${fmt(item.points)} 分`;})];downloadFile(lines.join('\n'),session.title+'-作答紀錄.txt');}
   async function showRecords() {
-    const dialog=$('recordsDialog');dialog.showModal();$('recordsContent').innerHTML='<p class="empty">讀取紀錄中…</p>';let records=[...history];let remote=false;
+    const dialog=$('recordsDialog');if(!dialog.open)dialog.showModal();$('recordsContent').innerHTML='<p class="empty">讀取紀錄中…</p>';const oldPending=legacy('-history',[]).filter(r=>r.mode==='paper'&&!r.sent&&legacy('-send',{})[r.attemptId]?.state!=='sent'&&sendStatuses[r.attemptId]?.state!=='sent').map(r=>({...r,title:'一段待補送・'+r.title,version:'115-1-v1'}));
+    let records=[...history,...oldPending];let remote=false;
     try {const res=await api('/api/records');remote=true;for(const r of res.records) if(!records.some(v=>v.attemptId===r.attemptId))records.push({...r,title:`練習卷 ${r.paperId}`,max:100,mode:'paper',sent:true});}catch{}
     records.sort((a,b)=>new Date(b.finishedAt)-new Date(a.finishedAt));
     $('recordsContent').innerHTML=(!remote?'<p class="empty">目前顯示本機紀錄；老師端連線恢復後可再查詢。</p>':'')+(records.length?records.map(r=>`<div class="record"><div class="record-top"><strong>${esc(r.title)}</strong><strong>${fmt(r.score)} / ${r.max}</strong></div><p>${esc(new Date(r.finishedAt).toLocaleString('zh-TW',{timeZone:'Asia/Taipei'}))}・${r.mode==='paper'?(sendStatuses[r.attemptId]?.state==='sent'||r.sent?'已送達老師端':'本機保存，尚未送達'):'補強練習'}</p><p>${r.wrong?.length?`未得滿分 ${r.wrong.length} 題`:'全部答對'}</p>${r.mode==='paper'&&!r.sent&&sendStatuses[r.attemptId]?.state!=='sent'?`<button type="button" data-retry-record="${esc(r.attemptId)}">補送這筆紀錄</button>`:''}</div>`).join(''):'<p class="empty">還沒有紀錄，先完成一次練習。</p>');
   }
   function retryWrong() {const r=grading();if(!r.wrong.length)return;const title=session.title+'・錯題重練';mode='retry';session=newSession(r.wrong,title);onlyWrong=false;persist();render();$('workspace').scrollIntoView({behavior:'smooth',block:'start'});}
   async function start() {
-    try {const res=await fetch('bank.json');if(!res.ok)throw Error();bank=await res.json();}
+    try {const res=await fetch('bank.json?v=exam2-1');if(!res.ok)throw Error();bank=await res.json();if(bank.version!=='115-1-exam2-v1')throw Error();}
     catch {$('quizForm').innerHTML='<p class="notice">題庫載入失敗，請重新整理頁面。</p>';return;}
-    const s=storage.get('-student',{});for(const id of ['className','seatNumber','studentName'])$(id).value=s[id]||'';saveStudent();
+    const s=storage.get('-student',legacy('-student',{}));for(const id of ['className','seatNumber','studentName'])$(id).value=s[id]||'';saveStudent();
     $('paperSelect').innerHTML=bank.papers.map(p=>`<option value="${p.id}">${p.title}</option>`).join('');const groups=[...new Set(bank.types.map(t=>t.category))];$('typeSelect').innerHTML=groups.map(c=>`<optgroup label="${esc(c)}">${bank.types.filter(t=>t.category===c).map(t=>`<option value="${t.id}">${t.id}. ${esc(t.title)}</option>`).join('')}</optgroup>`).join('');
     const savedView=storage.get('-view',{});if(bank.papers.some(p=>p.id===savedView.paperId))paperId=savedView.paperId;if(bank.types.some(t=>t.id===savedView.typeId))typeId=savedView.typeId;mode=savedView.mode==='type'?'type':'paper';$('paperSelect').value=paperId;$('typeSelect').value=typeId;selectSession();
     $('studentForm').addEventListener('input',saveStudent);$('studentForm').addEventListener('submit',e=>e.preventDefault());$('quizForm').addEventListener('submit',e=>e.preventDefault());
@@ -94,7 +99,7 @@
     $('questionNav').addEventListener('click',e=>{const b=e.target.closest('[data-jump]');if(!b)return;const el=$('question-'+b.dataset.jump);if(el.hidden){onlyWrong=false;$('wrongFilter').setAttribute('aria-pressed','false');document.querySelectorAll('.question').forEach(q=>q.hidden=false);}el.scrollIntoView({behavior:'smooth',block:'start'});});
     $('gradeButton').addEventListener('click',grade);$('wrongFilter').addEventListener('click',()=>{onlyWrong=!onlyWrong;document.querySelectorAll('.question').forEach(el=>el.hidden=onlyWrong&&score(question(el.dataset.id),session.answers[el.dataset.id])===40);$('wrongFilter').setAttribute('aria-pressed',String(onlyWrong));});
     $('expandAll').addEventListener('click',()=>{const all=[...document.querySelectorAll('.solution')];const open=all.some(el=>!el.open);all.forEach(el=>el.open=open);$('expandAll').textContent=open?'收合全部詳解':'展開全部詳解';});$('retryWrong').addEventListener('click',retryWrong);
-    $('refreshLeaderboard').addEventListener('click',loadLeaderboard);$('recordsButton').addEventListener('click',showRecords);$('closeRecords').addEventListener('click',()=>$('recordsDialog').close());$('recordsContent').addEventListener('click',async e=>{const b=e.target.closest('[data-retry-record]');if(!b)return;const r=history.find(x=>x.attemptId===b.dataset.retryRecord);b.disabled=true;await sendAttempt(r);showRecords();});
+    $('refreshLeaderboard').addEventListener('click',loadLeaderboard);$('recordsButton').addEventListener('click',showRecords);$('closeRecords').addEventListener('click',()=>$('recordsDialog').close());$('recordsContent').addEventListener('click',async e=>{const b=e.target.closest('[data-retry-record]');if(!b)return;const r=history.find(x=>x.attemptId===b.dataset.retryRecord)||{...legacy('-history',[]).find(x=>x.attemptId===b.dataset.retryRecord),version:'115-1-v1'};b.disabled=true;await sendAttempt(r);showRecords();});
     window.addEventListener('online',()=>{if(session.graded&&mode==='paper')sendAttempt(session);});
     // A small public test seam exposes pure scoring only; it contains no server credentials.
     window.SportsPractice={score,version:bank.version};

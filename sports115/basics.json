@@ -1,0 +1,1181 @@
+[
+  {
+    "number": 1,
+    "section": "一、解釋斜率與找斜率",
+    "prompt": "兩軸每格都是 1 單位。用一句話說明每往右幾格，就往上或往下幾格。",
+    "example": "$m=\\dfrac{2}{3}$ → 每往右 3 格，就往上 2 格。",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$m=-\\dfrac{1}{2}$",
+        "answer": "向右 2 格、向下 1 格",
+        "graph": null
+      },
+      {
+        "text": "$m=\\dfrac{3}{4}$",
+        "answer": "向右 4 格、向上 3 格",
+        "graph": null
+      },
+      {
+        "text": "$m=-\\dfrac{2}{5}$",
+        "answer": "向右 5 格、向下 2 格",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 2,
+    "section": "一、解釋斜率與找斜率",
+    "prompt": "求各圖直線的斜率（每格 1 單位）。",
+    "example": "$m=-\\frac{1}{2}$",
+    "exampleGraph": {
+      "points": [
+        [
+          1,
+          3
+        ],
+        [
+          5,
+          1
+        ]
+      ]
+    },
+    "items": [
+      {
+        "text": "讀出直線斜率。",
+        "answer": "$m=\\dfrac{2}{3}$",
+        "graph": {
+          "points": [
+            [
+              1,
+              1
+            ],
+            [
+              4,
+              3
+            ]
+          ]
+        }
+      },
+      {
+        "text": "讀出直線斜率。",
+        "answer": "$m=-\\dfrac{3}{2}$",
+        "graph": {
+          "points": [
+            [
+              2,
+              4
+            ],
+            [
+              4,
+              1
+            ]
+          ]
+        }
+      },
+      {
+        "text": "讀出直線斜率。",
+        "answer": "$m=\\dfrac{1}{4}$",
+        "graph": {
+          "points": [
+            [
+              1,
+              2
+            ],
+            [
+              5,
+              3
+            ]
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "number": 3,
+    "section": "一、解釋斜率與找斜率",
+    "prompt": "依箭頭方向，求橫向與縱向變化量。",
+    "example": "$(-2,5)\\to(4,-4)$ → $(6,-9)$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$(1,2)\\to(5,5)$",
+        "answer": "$(4,3)$",
+        "graph": null
+      },
+      {
+        "text": "$(-3,4)\\to(2,-2)$",
+        "answer": "$(5,-6)$",
+        "graph": null
+      },
+      {
+        "text": "$(4,-1)\\to(-2,3)$",
+        "answer": "$(-6,4)$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 4,
+    "section": "一、解釋斜率與找斜率",
+    "prompt": "求通過兩點的水平線斜率，列出算式。",
+    "example": "$(-2,3)$、$(4,3)$ → $\\dfrac{0}{6}=0$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$(1,4)$、$(5,4)$",
+        "answer": "$\\dfrac{0}{4}=0$",
+        "graph": null
+      },
+      {
+        "text": "$(-3,-2)$、$(2,-2)$",
+        "answer": "$\\dfrac{0}{5}=0$",
+        "graph": null
+      },
+      {
+        "text": "$(-4,0)$、$(3,0)$",
+        "answer": "$\\dfrac{0}{7}=0$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 5,
+    "section": "一、解釋斜率與找斜率",
+    "prompt": "求兩點的橫向變化量，判斷鉛直線的斜率是否存在。",
+    "example": "$(2,-1)$、$(2,4)$ → $\\Delta x=0$，斜率不存在。",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$(3,1)$、$(3,6)$",
+        "answer": "$\\Delta x=0$，斜率不存在",
+        "graph": null
+      },
+      {
+        "text": "$(-2,-1)$、$(-2,4)$",
+        "answer": "$\\Delta x=0$，斜率不存在",
+        "graph": null
+      },
+      {
+        "text": "$(0,5)$、$(0,-3)$",
+        "answer": "$\\Delta x=0$，斜率不存在",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 6,
+    "section": "二、由條件寫直線、由方程式找點",
+    "prompt": "寫出過指定點的水平線方程式。",
+    "example": "$(-3,2)$ → $y=2$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$(4,3)$",
+        "answer": "$y=3$",
+        "graph": null
+      },
+      {
+        "text": "$(2,-5)$",
+        "answer": "$y=-5$",
+        "graph": null
+      },
+      {
+        "text": "$(-6,0)$",
+        "answer": "$y=0$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 7,
+    "section": "二、由條件寫直線、由方程式找點",
+    "prompt": "寫出過指定點的鉛直線方程式。",
+    "example": "$(-3,2)$ → $x=-3$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$(4,3)$",
+        "answer": "$x=4$",
+        "graph": null
+      },
+      {
+        "text": "$(-5,2)$",
+        "answer": "$x=-5$",
+        "graph": null
+      },
+      {
+        "text": "$(0,-6)$",
+        "answer": "$x=0$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 8,
+    "section": "二、由條件寫直線、由方程式找點",
+    "prompt": "已知一點和斜率，寫出點斜式。",
+    "example": "過 $(1,4)$，$m=-2$ → $y-4=-2(x-1)$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "過 $(2,3)$，$m=4$",
+        "answer": "$y-3=4(x-2)$",
+        "graph": null
+      },
+      {
+        "text": "過 $(-1,2)$，$m=-3$",
+        "answer": "$y-2=-3(x+1)$",
+        "graph": null
+      },
+      {
+        "text": "過 $(4,-2)$，$m=\\dfrac{1}{2}$",
+        "answer": "$y+2=\\dfrac{1}{2}(x-4)$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 9,
+    "section": "二、由條件寫直線、由方程式找點",
+    "prompt": "從點斜式讀出式中使用的點及斜率。",
+    "example": "$y-4=-2(x-1)$ → $(1,4)$，$m=-2$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$y-3=2(x-5)$",
+        "answer": "$(5,3)$，$m=2$",
+        "graph": null
+      },
+      {
+        "text": "$y+1=-4(x-2)$",
+        "answer": "$(2,-1)$，$m=-4$",
+        "graph": null
+      },
+      {
+        "text": "$y+3=\\dfrac{1}{2}(x+6)$",
+        "answer": "$(-6,-3)$，$m=\\dfrac{1}{2}$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 10,
+    "section": "二、由條件寫直線、由方程式找點",
+    "prompt": "寫出通過兩點的直線方程式。",
+    "example": "$(1,4)$、$(3,0)$ → $y-4=-2(x-1)$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$(1,2)$、$(3,6)$",
+        "answer": "$y-2=2(x-1)$",
+        "graph": null
+      },
+      {
+        "text": "$(-2,3)$、$(2,1)$",
+        "answer": "$y-3=-\\dfrac{1}{2}(x+2)$",
+        "graph": null
+      },
+      {
+        "text": "$(3,-2)$、$(3,4)$",
+        "answer": "$x=3$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 11,
+    "section": "二、由條件寫直線、由方程式找點",
+    "prompt": "判斷指定點是否在直線上。",
+    "example": "$(2,3)$，$2x+y=7$ → $2(2)+3=7$，在",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$(1,4)$，$2x+y=6$",
+        "answer": "$2(1)+4=6$，在",
+        "graph": null
+      },
+      {
+        "text": "$(-1,2)$，$x-y=1$",
+        "answer": "$-1-2=-3\\ne1$，不在",
+        "graph": null
+      },
+      {
+        "text": "$(0,-3)$，$3x-y=3$",
+        "answer": "$3(0)-(-3)=3$，在",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 12,
+    "section": "二、由條件寫直線、由方程式找點",
+    "prompt": "求直線與 $x$ 軸的交點，寫出完整坐標。",
+    "example": "$2x+y-6=0$ → $(3,0)$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$x+y=5$",
+        "answer": "$(5,0)$",
+        "graph": null
+      },
+      {
+        "text": "$2x-y=-6$",
+        "answer": "$(-3,0)$",
+        "graph": null
+      },
+      {
+        "text": "$3x+2y=6$",
+        "answer": "$(2,0)$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 13,
+    "section": "二、由條件寫直線、由方程式找點",
+    "prompt": "求直線與 $y$ 軸的交點，寫出完整坐標。",
+    "example": "$2x+y-6=0$ → $(0,6)$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$x+y=5$",
+        "answer": "$(0,5)$",
+        "graph": null
+      },
+      {
+        "text": "$2x-y=3$",
+        "answer": "$(0,-3)$",
+        "graph": null
+      },
+      {
+        "text": "$3x+2y=6$",
+        "answer": "$(0,3)$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 14,
+    "section": "二、由條件寫直線、由方程式找點",
+    "prompt": "已知斜率 $m$ 與 $y$ 截距 $b$，寫出斜截式。",
+    "example": "$m=-2,\\ b=6$ → $y=-2x+6$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$m=3,\\ b=2$",
+        "answer": "$y=3x+2$",
+        "graph": null
+      },
+      {
+        "text": "$m=-2,\\ b=-1$",
+        "answer": "$y=-2x-1$",
+        "graph": null
+      },
+      {
+        "text": "$m=\\dfrac{1}{2},\\ b=0$",
+        "answer": "$y=\\dfrac{1}{2}x$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 15,
+    "section": "三、直線格式轉換",
+    "prompt": "將點斜式化為斜截式。",
+    "example": "$y-4=-2(x-1)$ → $y=-2x+6$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$y-2=3(x-1)$",
+        "answer": "$y=3x-1$",
+        "graph": null
+      },
+      {
+        "text": "$y+1=-2(x+3)$",
+        "answer": "$y=-2x-7$",
+        "graph": null
+      },
+      {
+        "text": "$y-3=\\dfrac{1}{2}(x-4)$",
+        "answer": "$y=\\dfrac{1}{2}x+1$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 16,
+    "section": "三、直線格式轉換",
+    "prompt": "將點斜式化為一般式。",
+    "example": "$y-4=-2(x-1)$ → $2x+y-6=0$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$y-2=3(x-1)$",
+        "answer": "$3x-y-1=0$",
+        "graph": null
+      },
+      {
+        "text": "$y+1=-2(x+3)$",
+        "answer": "$2x+y+7=0$",
+        "graph": null
+      },
+      {
+        "text": "$y-3=\\dfrac{1}{2}(x-4)$",
+        "answer": "$x-2y+2=0$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 17,
+    "section": "三、直線格式轉換",
+    "prompt": "將斜截式化為一般式。",
+    "example": "$y=-2x+6$ → $2x+y-6=0$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$y=3x+2$",
+        "answer": "$3x-y+2=0$",
+        "graph": null
+      },
+      {
+        "text": "$y=-x-4$",
+        "answer": "$x+y+4=0$",
+        "graph": null
+      },
+      {
+        "text": "$y=\\dfrac{1}{2}x-3$",
+        "answer": "$x-2y-6=0$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 18,
+    "section": "三、直線格式轉換",
+    "prompt": "將一般式化為斜截式。",
+    "example": "$2x+y-6=0$ → $y=-2x+6$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$x+y-4=0$",
+        "answer": "$y=-x+4$",
+        "graph": null
+      },
+      {
+        "text": "$3x-y+2=0$",
+        "answer": "$y=3x+2$",
+        "graph": null
+      },
+      {
+        "text": "$x+2y-6=0$",
+        "answer": "$y=-\\dfrac{1}{2}x+3$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 19,
+    "section": "四、平行線與垂線",
+    "prompt": "與下列直線平行的直線，斜率是多少？",
+    "example": "$y=-3x+4$ → $m=-3$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$y=2x-5$",
+        "answer": "$m=2$",
+        "graph": null
+      },
+      {
+        "text": "$y=-\\dfrac{1}{2}x+3$",
+        "answer": "$m=-\\dfrac{1}{2}$",
+        "graph": null
+      },
+      {
+        "text": "$y=4$",
+        "answer": "$m=0$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 20,
+    "section": "四、平行線與垂線",
+    "prompt": "平行一：沿用原線斜率，寫出過指定點的平行線。",
+    "example": "原線 $y=2x+1$，過 $(1,4)$ → $y-4=2(x-1)$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "原線 $y=3x-1$，過 $(2,4)$",
+        "answer": "$y-4=3(x-2)$",
+        "graph": null
+      },
+      {
+        "text": "原線 $y=-2x+5$，過 $(-1,2)$",
+        "answer": "$y-2=-2(x+1)$",
+        "graph": null
+      },
+      {
+        "text": "原線 $y=\\dfrac{1}{2}x-2$，過 $(4,-1)$",
+        "answer": "$y+1=\\dfrac{1}{2}(x-4)$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 21,
+    "section": "四、平行線與垂線",
+    "prompt": "平行二：保留 $x,y$ 的係數，代入指定點求常數，寫出平行線。",
+    "example": "原線 $2x-y+1=0$，過 $(1,4)$ → $2x-y+2=0$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "原線 $x+y-1=0$，  過 $(2,3)$",
+        "answer": "$x+y-5=0$",
+        "graph": null
+      },
+      {
+        "text": "原線 $3x-y+2=0$，  過 $(-1,4)$",
+        "answer": "$3x-y+7=0$",
+        "graph": null
+      },
+      {
+        "text": "原線 $2x+3y-6=0$，  過 $(3,-2)$",
+        "answer": "$2x+3y=0$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 22,
+    "section": "四、平行線與垂線",
+    "prompt": "求各直線的垂線斜率；若不存在，註明「不存在」。",
+    "example": "原線斜率 $m=\\dfrac{2}{3}$ → $m=-\\dfrac{3}{2}$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "原線 $y=4x+1$",
+        "answer": "$m=-\\dfrac{1}{4}$",
+        "graph": null
+      },
+      {
+        "text": "原線 $y=-\\dfrac{1}{3}x+5$",
+        "answer": "$m=3$",
+        "graph": null
+      },
+      {
+        "text": "原線 $y=2$",
+        "answer": "斜率不存在",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 23,
+    "section": "四、平行線與垂線",
+    "prompt": "寫出過指定點且與原線垂直的直線方程式。",
+    "example": "原線 $y=-2x+3$，過 $(2,1)$ → $y-1=\\dfrac{1}{2}(x-2)$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "原線 $y=3x-1$，過 $(1,2)$",
+        "answer": "$y-2=-\\dfrac{1}{3}(x-1)$",
+        "graph": null
+      },
+      {
+        "text": "原線 $y=-\\dfrac{1}{2}x+4$，過 $(-1,3)$",
+        "answer": "$y-3=2(x+1)$",
+        "graph": null
+      },
+      {
+        "text": "原線 $x=4$，過 $(2,-3)$",
+        "answer": "$y=-3$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 24,
+    "section": "五、中點、內分點、對稱點與投影點",
+    "prompt": "求下列兩端點的中點坐標。",
+    "example": "$(-2,4)$、$(6,2)$ → $(2,3)$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$(0,2)$、$(6,4)$",
+        "answer": "$(3,3)$",
+        "graph": null
+      },
+      {
+        "text": "$(-4,3)$、$(2,-1)$",
+        "answer": "$(-1,1)$",
+        "graph": null
+      },
+      {
+        "text": "$(1,-2)$、$(4,3)$",
+        "answer": "$\\left(\\dfrac{5}{2},\\dfrac{1}{2}\\right)$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 25,
+    "section": "五、中點、內分點、對稱點與投影點",
+    "prompt": "$P$ 在線段 $AB$ 上。依分段比求 $\\dfrac{AP}{AB}$。",
+    "example": "$AP:PB=1:2$ → $\\dfrac{1}{3}$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$AP:PB=2:3$",
+        "answer": "$\\dfrac{2}{5}$",
+        "graph": null
+      },
+      {
+        "text": "$AP:PB=3:1$",
+        "answer": "$\\dfrac{3}{4}$",
+        "graph": null
+      },
+      {
+        "text": "$AP:PB=2:4$",
+        "answer": "$\\dfrac{1}{3}$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 26,
+    "section": "五、中點、內分點、對稱點與投影點",
+    "prompt": "$P$ 在線段 $AB$ 上。依 $AP:PB$ 求 $P$ 的坐標。",
+    "example": "$A(1,2)$、$B(7,5)$，$AP:PB=1:2$ → $(3,3)$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$A(0,0)$、$B(6,9)$，  $AP:PB=1:2$",
+        "answer": "$(2,3)$",
+        "graph": null
+      },
+      {
+        "text": "$A(-2,4)$、$B(6,0)$，  $AP:PB=3:1$",
+        "answer": "$(4,1)$",
+        "graph": null
+      },
+      {
+        "text": "$A(5,-1)$、$B(-1,5)$，  $AP:PB=2:1$",
+        "answer": "$(1,3)$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 27,
+    "section": "五、中點、內分點、對稱點與投影點",
+    "prompt": "求各點對 $x$ 軸的對稱點。",
+    "example": "$(-3,5)\\mapsto (-3,-5)$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$(2,4)$",
+        "answer": "$(2,-4)$",
+        "graph": null
+      },
+      {
+        "text": "$(-5,-1)$",
+        "answer": "$(-5,1)$",
+        "graph": null
+      },
+      {
+        "text": "$(3,0)$ ",
+        "answer": "$(3,0)$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 28,
+    "section": "五、中點、內分點、對稱點與投影點",
+    "prompt": "求各點對 $y$ 軸的對稱點。",
+    "example": "$(-3,5)\\mapsto (3,5)$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$(2,4)$",
+        "answer": "$(-2,4)$",
+        "graph": null
+      },
+      {
+        "text": "$(-5,-1)$",
+        "answer": "$(5,-1)$",
+        "graph": null
+      },
+      {
+        "text": "$(0,3)$ ",
+        "answer": "$(0,3)$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 29,
+    "section": "五、中點、內分點、對稱點與投影點",
+    "prompt": "求各點對原點的對稱點。",
+    "example": "$(-3,5)\\mapsto (3,-5)$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$(2,4)$",
+        "answer": "$(-2,-4)$",
+        "graph": null
+      },
+      {
+        "text": "$(-5,-1)$",
+        "answer": "$(5,1)$",
+        "graph": null
+      },
+      {
+        "text": "$(0,3)$ ",
+        "answer": "$(0,-3)$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 30,
+    "section": "五、中點、內分點、對稱點與投影點",
+    "prompt": "求各點對直線 $y=x$ 的對稱點。",
+    "example": "$(-3,5)\\mapsto (5,-3)$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$(2,4)$",
+        "answer": "$(4,2)$",
+        "graph": null
+      },
+      {
+        "text": "$(-5,-1)$",
+        "answer": "$(-1,-5)$",
+        "graph": null
+      },
+      {
+        "text": "$(3,3)$ ",
+        "answer": "$(3,3)$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 31,
+    "section": "五、中點、內分點、對稱點與投影點",
+    "prompt": "求各點在 $x$ 軸上的投影點。",
+    "example": "$(-3,5)\\mapsto (-3,0)$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$(2,4)$",
+        "answer": "$(2,0)$",
+        "graph": null
+      },
+      {
+        "text": "$(-5,-1)$",
+        "answer": "$(-5,0)$",
+        "graph": null
+      },
+      {
+        "text": "$(0,3)$ ",
+        "answer": "$(0,0)$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 32,
+    "section": "五、中點、內分點、對稱點與投影點",
+    "prompt": "求各點在 $y$ 軸上的投影點。",
+    "example": "$(-3,5)\\mapsto (0,5)$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$(2,4)$",
+        "answer": "$(0,4)$",
+        "graph": null
+      },
+      {
+        "text": "$(-5,-1)$",
+        "answer": "$(0,-1)$",
+        "graph": null
+      },
+      {
+        "text": "$(3,0)$ ",
+        "answer": "$(0,0)$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 33,
+    "section": "五、中點、內分點、對稱點與投影點",
+    "prompt": "求各點在直線 $y=x$ 上的投影點。",
+    "example": "$(-3,5)\\mapsto (1,1)$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$(2,4)$",
+        "answer": "$(3,3)$",
+        "graph": null
+      },
+      {
+        "text": "$(-5,1)$",
+        "answer": "$(-2,-2)$",
+        "graph": null
+      },
+      {
+        "text": "$(1,4)$ ",
+        "answer": "$\\left(\\dfrac{5}{2},\\dfrac{5}{2}\\right)$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 34,
+    "section": "六、兩直線交點、點到直線距離與半平面",
+    "prompt": "求兩直線的交點，寫出完整坐標。",
+    "example": "$x+y=5$ 與 $x-y=1$ → $(3,2)$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$x+y=7$ 與 $x-y=3$",
+        "answer": "$(5,2)$",
+        "graph": null
+      },
+      {
+        "text": "$2x+y=4$ 與 $x-y=-1$",
+        "answer": "$(1,2)$",
+        "graph": null
+      },
+      {
+        "text": "$x+2y=3$ 與 $x-y=6$",
+        "answer": "$(5,-1)$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 35,
+    "section": "六、兩直線交點、點到直線距離與半平面",
+    "prompt": "求指定點到直線的距離。",
+    "example": "點 $(1,2)$，直線 $3x+4y-1=0$ → $d=2$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "點 $(0,0)$，  直線 $3x+4y=15$",
+        "answer": "$d=3$",
+        "graph": null
+      },
+      {
+        "text": "點 $(2,1)$，  直線 $x=5$",
+        "answer": "$d=3$",
+        "graph": null
+      },
+      {
+        "text": "點 $(1,-1)$，  直線 $3x-4y+3=0$",
+        "answer": "$d=2$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 36,
+    "section": "六、兩直線交點、點到直線距離與半平面",
+    "prompt": "寫出邊界方程式，並在方格上畫出邊界（每格 1 單位）。",
+    "example": "$x+2y<4$ → 邊界是 $x+2y=4$，畫虛線。",
+    "exampleGraph": {
+      "boundary": [
+        1,
+        2,
+        4
+      ],
+      "closed": false
+    },
+    "items": [
+      {
+        "text": "$x+y\\le 3$",
+        "answer": "$x+y=3$，實線",
+        "graph": null,
+        "answerGraph": {
+          "boundary": [
+            1,
+            1,
+            3
+          ],
+          "closed": true
+        }
+      },
+      {
+        "text": "$2x-y>2$",
+        "answer": "$2x-y=2$，虛線",
+        "graph": null,
+        "answerGraph": {
+          "boundary": [
+            2,
+            -1,
+            2
+          ],
+          "closed": false
+        }
+      },
+      {
+        "text": "$x\\ge -2$",
+        "answer": "$x=-2$，實線",
+        "graph": null,
+        "answerGraph": {
+          "boundary": [
+            1,
+            0,
+            -2
+          ],
+          "closed": true
+        }
+      }
+    ]
+  },
+  {
+    "number": 37,
+    "section": "六、兩直線交點、點到直線距離與半平面",
+    "prompt": "寫出邊界方程式，判斷應畫實線或虛線。",
+    "example": "$2x-y\\le3$ → $2x-y=3$，實線。",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$x+y<4$",
+        "answer": "$x+y=4$，虛線",
+        "graph": null
+      },
+      {
+        "text": "$2x-y\\ge 1$",
+        "answer": "$2x-y=1$，實線",
+        "graph": null
+      },
+      {
+        "text": "$y>-2$",
+        "answer": "$y=-2$，虛線",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 38,
+    "section": "六、兩直線交點、點到直線距離與半平面",
+    "prompt": "代入指定測試點，判斷陰影應塗在含該點的一側或另一側。",
+    "example": "$x+2y<4$，用 $(0,0)$ → 含 $(0,0)$ 的一側。",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$x+y<3$，用 $(0,0)$",
+        "answer": "含 $(0,0)$ 的一側",
+        "graph": null
+      },
+      {
+        "text": "$x-y>2$，用 $(0,0)$",
+        "answer": "不含 $(0,0)$ 的一側",
+        "graph": null
+      },
+      {
+        "text": "$y\\ge x$，用 $(0,1)$",
+        "answer": "含 $(0,1)$ 的一側",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 39,
+    "section": "七、距離與圓的方程式",
+    "prompt": "求兩點間的距離。",
+    "example": "$(-1,2)$、$(2,6)$ → $5$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$(0,0)$、$(6,8)$",
+        "answer": "$10$",
+        "graph": null
+      },
+      {
+        "text": "$(-3,1)$、$(1,-2)$",
+        "answer": "$5$",
+        "graph": null
+      },
+      {
+        "text": "$(1,1)$、$(3,4)$",
+        "answer": "$\\sqrt{13}$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 40,
+    "section": "七、距離與圓的方程式",
+    "prompt": "寫出圓心坐標與半徑。",
+    "example": "$(x+2)^2+(y-1)^2=16$ → $(-2,1)$，$r=4$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$(x-3)^2+(y-2)^2=25$",
+        "answer": "$(3,2)$，$r=5$",
+        "graph": null
+      },
+      {
+        "text": "$(x+1)^2+(y+4)^2=9$",
+        "answer": "$(-1,-4)$，$r=3$",
+        "graph": null
+      },
+      {
+        "text": "$x^2+(y-5)^2=7$",
+        "answer": "$(0,5)$，$r=\\sqrt{7}$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 41,
+    "section": "七、距離與圓的方程式",
+    "prompt": "依圓心與半徑寫出圓的標準式。",
+    "example": "圓心 $(3,-2)$，半徑 $6$ → $(x-3)^2+(y+2)^2=36$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "圓心 $(1,2)$，半徑 $3$",
+        "answer": "$(x-1)^2+(y-2)^2=9$",
+        "graph": null
+      },
+      {
+        "text": "圓心 $(-2,4)$，半徑 $5$",
+        "answer": "$(x+2)^2+(y-4)^2=25$",
+        "graph": null
+      },
+      {
+        "text": "圓心 $(0,-3)$，半徑 $\\sqrt{2}$",
+        "answer": "$x^2+(y+3)^2=2$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 42,
+    "section": "七、距離與圓的方程式",
+    "prompt": "依圓心與圓上一點寫出圓的標準式。",
+    "example": "圓心 $(-1,3)$，通過 $(2,7)$ → $(x+1)^2+(y-3)^2=25$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "圓心 $(1,1)$，通過 $(4,5)$",
+        "answer": "$(x-1)^2+(y-1)^2=25$",
+        "graph": null
+      },
+      {
+        "text": "圓心 $(-2,3)$，通過 $(-2,8)$",
+        "answer": "$(x+2)^2+(y-3)^2=25$",
+        "graph": null
+      },
+      {
+        "text": "圓心 $(2,-1)$，通過 $(4,2)$",
+        "answer": "$(x-2)^2+(y+1)^2=13$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 43,
+    "section": "七、距離與圓的方程式",
+    "prompt": "用配方法將各圓化為標準式。",
+    "example": "$x^2+y^2-6x+4y+9=0$ → $(x-3)^2+(y+2)^2=4$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$x^2+y^2-4x-6y+4=0$",
+        "answer": "$(x-2)^2+(y-3)^2=9$",
+        "graph": null
+      },
+      {
+        "text": "$x^2+y^2+2x-4y-4=0$",
+        "answer": "$(x+1)^2+(y-2)^2=9$",
+        "graph": null
+      },
+      {
+        "text": "$x^2+y^2-6y+5=0$",
+        "answer": "$x^2+(y-3)^2=4$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 44,
+    "section": "七、距離與圓的方程式",
+    "prompt": "已知直徑兩端點，求圓心、半徑及圓的標準式。",
+    "example": "$(6,0)$、$(0,8)$ → $(3,4)$，$r=5$，$(x-3)^2+(y-4)^2=25$",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$(0,0)$、$(6,0)$",
+        "answer": "$(3,0)$，$r=3$，$(x-3)^2+y^2=9$",
+        "graph": null
+      },
+      {
+        "text": "$(-2,1)$、$(4,9)$",
+        "answer": "$(1,5)$，$r=5$，$(x-1)^2+(y-5)^2=25$",
+        "graph": null
+      },
+      {
+        "text": "$(-3,-1)$、$(1,3)$",
+        "answer": "$(-1,1)$，$r=2\\sqrt{2}$，$(x+1)^2+(y-1)^2=8$",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 45,
+    "section": "八、比較距離與半徑",
+    "prompt": "圓為 $(x-1)^2+(y-2)^2=25$。求該點到圓心的距離 $d$，與半徑 $r$ 比較，判斷圓內、圓上或圓外。",
+    "example": "$P(4,6)$ → $d=r=5$，圓上。",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$P(1,5)$",
+        "answer": "$d=3<5$，圓內",
+        "graph": null
+      },
+      {
+        "text": "$P(6,2)$",
+        "answer": "$d=5=r$，圓上",
+        "graph": null
+      },
+      {
+        "text": "$P(1,-4)$",
+        "answer": "$d=6>5$，圓外",
+        "graph": null
+      }
+    ]
+  },
+  {
+    "number": 46,
+    "section": "八、比較距離與半徑",
+    "prompt": "圓為 $x^2+y^2=4$。求圓心到直線的垂直距離 $d$，與半徑 $r$ 比較，判斷相割、相切或相離。",
+    "example": "$3x+4y-10=0$ → $d=r=2$，相切。",
+    "exampleGraph": null,
+    "items": [
+      {
+        "text": "$3x+4y-5=0$",
+        "answer": "$d=1<2$，相割",
+        "graph": null
+      },
+      {
+        "text": "$3x+4y+10=0$",
+        "answer": "$d=2=r$，相切",
+        "graph": null
+      },
+      {
+        "text": "$3x+4y-15=0$",
+        "answer": "$d=3>2$，相離",
+        "graph": null
+      }
+    ]
+  }
+]
