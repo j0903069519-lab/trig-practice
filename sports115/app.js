@@ -152,7 +152,7 @@
     $('paperPicker').hidden=mode!=='paper';$('typePicker').hidden=mode!=='type';$('leaderboardPanel').hidden=mode!=='paper';
     $('modeCaption').textContent=mode==='paper'?'完整考卷':mode==='type'?'一次專心練一種題型':'錯題重練';$('sessionTitle').textContent=session.title;
     $('resetButton').textContent=mode==='type'?'重新出題':'重新作答';$('paperExport').hidden=mode!=='paper';
-    $('paperExport').href='print/'+paperId+'.pdf';$('paperExport').download='二段練習卷_'+paperId+'.pdf';drawPage();
+    $('paperExport').href='print/'+paperId+'.pdf?v=exam2-3';$('paperExport').download='二段練習卷_'+paperId+'.pdf';drawPage();
     $('quizTools').hidden=!session.graded;$('gradeButton').disabled=session.graded;$('gradeButton').innerHTML=session.graded?'已完成批改':'送出批改 <span aria-hidden="true">→</span>';
     $('wrongFilter').setAttribute('aria-pressed',String(onlyWrong));renderResult();if(mode==='paper')loadLeaderboard();
   }
