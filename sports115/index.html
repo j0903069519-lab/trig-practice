@@ -7,27 +7,27 @@
   <title>高一體育班｜數學段考練習</title>
   <link rel="stylesheet" href="vendor/katex.min.css"><link rel="stylesheet" href="styles.css?v=20261007-title">
   <script defer src="vendor/katex.min.js"></script><script defer src="vendor/auto-render.min.js"></script>
-  <link rel="stylesheet" href="exam2.css?v=pager1"><script defer src="pager.js?v=1"></script><script defer src="geometry.js?v=1"></script><script defer src="app.js?v=exam2-2-drafts-20261127"></script>
+  <link rel="stylesheet" href="exam2.css?v=pager1"><script defer src="pager.js?v=1"></script><script defer src="geometry.js?v=1"></script><script defer src="app.js?v=exam2-3-25-20261127"></script>
 </head>
 <body>
 <a class="skip-link" href="#workspace">跳到練習題</a>
 <header class="topbar"><div class="brand"><span class="brand-mark" aria-hidden="true">數</span><div><p>丹鳳高中・高一體育班</p><h1>第二次段考練習</h1></div></div><div class="header-score" id="headerScore">準備開始</div></header>
 <main><nav class="areas" aria-label="練習區"><a href="basics.html">基礎技能複習</a><a aria-current="page" href="./">二段模擬考卷</a></nav>
-  <section class="intro practice-intro"><div><p class="eyebrow">115 學年度・第一學期</p><h2>二段模擬考卷</h2><p>選一份練習卷，作答後查看逐步詳解。</p></div><div class="intro-meta"><span>10 份練習卷</span><span>20 種題型</span><a class="paper-export" href="#questionPager">開始作答 ↓</a></div></section>
+  <section class="intro practice-intro"><div><p class="eyebrow">115 學年度・第一學期</p><h2>二段模擬考卷</h2><p>選一份練習卷，作答後查看逐步詳解。</p></div><div class="intro-meta"><span>10 份練習卷</span><span>25 種題型</span><a class="paper-export" href="#questionPager">開始作答 ↓</a></div></section>
   <section class="student-panel panel"><div class="section-head"><h2>作答資料</h2><span id="studentStatus" class="muted">練習卷交卷前需填寫</span></div><form id="studentForm"><label>班級<input id="className" maxlength="20" placeholder="例：體育一甲" autocomplete="organization" required></label><label>座號<input id="seatNumber" maxlength="3" inputmode="numeric" pattern="[0-9]{1,3}" placeholder="例：12" required></label><label>姓名<input id="studentName" maxlength="30" placeholder="請輸入姓名" autocomplete="name" required></label></form><div class="student-footer"><p>每次選答案立即保存。離開後請用同一台手機、同一個瀏覽器及原網址繼續。</p><button class="text-button" id="recordsButton" type="button">作答紀錄／繼續作答 ↗</button></div></section>
   <section id="draftPanel" class="panel" hidden><h2>繼續未完成的考卷</h2><p>選擇上次寫到一半的卷，答案和題號會一起恢復。草稿保存在目前瀏覽器，尚未送到老師端。</p><details><summary>查看未完成考卷</summary><div id="draftList"></div></details></section>
   <p id="storageWarning" class="notice" role="alert" hidden>這個瀏覽器目前無法保存作答，關閉後可能遺失。請保留此頁完成並交卷，確認已送達老師端。下次請用一般瀏覽模式開啟原網址。</p>
-  <nav class="mode-tabs" aria-label="練習模式"><button id="paperTab" class="active" aria-selected="true" type="button">完整考卷<span>20 題・80 分</span></button><button id="typeTab" aria-selected="false" type="button">題型練習<span>一次補強 5 題</span></button></nav>
+  <nav class="mode-tabs" aria-label="練習模式"><button id="paperTab" class="active" aria-selected="true" type="button">完整考卷<span>25 題・100 分</span></button><button id="typeTab" aria-selected="false" type="button">題型練習<span>一次補強 5 題</span></button></nav>
   <section id="workspace" tabindex="-1">
     <div class="workspace-head"><div><p class="eyebrow" id="modeCaption">完整考卷</p><h2 id="sessionTitle">練習卷 A</h2></div><div class="session-controls"><label id="paperPicker">選擇練習卷<select id="paperSelect" aria-label="選擇練習卷"></select></label><label id="typePicker" hidden>選擇題型<select id="typeSelect" aria-label="選擇題型"></select></label><a class="paper-export" id="paperExport" href="print/A.pdf" download="二段練習卷_A.pdf">輸出紙本題目</a><button id="resetButton" type="button">重新作答</button></div></div>
-    <div class="progress-panel panel"><div class="progress-label"><span id="progressText">已答 0 / 20 題</span><span id="draftStatus">作答會自動保存</span></div><div class="progress-track"><div id="progressFill"></div></div><details class="jump-list"><summary>跳至指定題號</summary><div id="questionNav" class="question-nav" aria-label="題號導覽"></div></details></div>
-    <details class="rules"><summary>作答與計分說明</summary><p>全卷 20 題皆為單選，每題 4 分。答錯或空白得 0 分。</p><p>交卷後本次答案會鎖定，才能安心看詳解。可隨時開始新的一次練習。完整卷成績可送到老師端；題型練習與錯題重練保存在這台裝置。</p></details>
+    <div class="progress-panel panel"><div class="progress-label"><span id="progressText">已答 0 / 25 題</span><span id="draftStatus">作答會自動保存</span></div><div class="progress-track"><div id="progressFill"></div></div><details class="jump-list"><summary>跳至指定題號</summary><div id="questionNav" class="question-nav" aria-label="題號導覽"></div></details></div>
+    <details class="rules"><summary>作答與計分說明</summary><p>全卷 25 題皆為單選，每題 4 分。答錯或空白得 0 分。</p><p>交卷後本次答案會鎖定，才能安心看詳解。可隨時開始新的一次練習。完整卷成績可送到老師端；題型練習與錯題重練保存在這台裝置。</p></details>
     <div id="notice" class="notice" role="status" hidden></div>
     <section id="resultPanel" class="result-panel" aria-live="polite" hidden></section>
     <div class="quiz-tools" id="quizTools" hidden><button id="wrongFilter" type="button" aria-pressed="false">只看未得滿分的題目</button><button id="retryWrong" type="button">錯題重練</button></div>
     <nav id="questionPager" class="question-pager" aria-label="逐題作答"><button id="prev" type="button">← 上一題</button><span id="pagePosition" aria-live="polite"></span><button id="next" type="button">下一題 →</button></nav>
     <form id="quizForm" class="quiz" aria-label="練習題"></form>
-    <div class="submit-bar"><div><strong id="bottomProgress">還有 20 題未作答</strong><span id="bottomHint">做完後一起批改，也可以先看觀念提示。</span></div><button id="gradeButton" class="primary" type="button">送出批改 <span aria-hidden="true">→</span></button></div>
+    <div class="submit-bar"><div><strong id="bottomProgress">還有 25 題未作答</strong><span id="bottomHint">做完後一起批改，也可以先看觀念提示。</span></div><button id="gradeButton" class="primary" type="button">送出批改 <span aria-hidden="true">→</span></button></div>
   </section>
   <section class="leaderboard panel" id="leaderboardPanel"><div class="section-head"><div><p class="eyebrow">每卷各自比較・每人最佳成績</p><h2>練習排行榜</h2></div><button id="refreshLeaderboard" class="text-button" type="button">重新整理</button></div><div id="leaderboardContent" class="muted">完成第一份練習，留下你的進步紀錄。</div></section>
   <footer>丹鳳高中・高一體育班數學練習<span>題目依正式卷題型改編，詳解配合每題數字。</span><a href="teacher.html">教師紀錄</a></footer>
