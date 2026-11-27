@@ -12,6 +12,8 @@
   }
   const device = storage.get('-device',null) || legacy('-device',null) || uuid()+uuid(); storage.set('-device',device);
   let bank, sessions = storage.get('-sessions',{}), mode='paper', paperId='A', typeId=1, session, onlyWrong=false;
+  let sessionBase=null, draftSaved=true;
+  const copy=value=>JSON.parse(JSON.stringify(value));
   let sendBusy=false, history=storage.get('-history',[]), sendStatuses=storage.get('-send',{});
   const API = (window.SPORTS_CONFIG?.API_BASE || '').replace(/\/$/,'');
   function math(el) {if(window.renderMathInElement) renderMathInElement(el,{delimiters:[{left:'$',right:'$',display:false}],throwOnError:false,strict:'ignore',trust:false});}
@@ -22,12 +24,70 @@
   function sessionKey() {return mode==='paper' ? 'paper-'+paperId : mode==='type' ? 'type-'+typeId : 'retry';}
   function score(q, selected) {const expected=new Set(q.answer), actual=new Set(selected||''); if(!actual.size) return 0; if(!q.multi) return selected===q.answer ? 40 : 0; let errors=0; for(const v of 'ABCDE') if(expected.has(v)!==actual.has(v)) errors++; return Math.max(0,40-errors*16);}
   function grading(s=session) {let units=0,full=0,partial=0,wrong=[];const items=s.ids.map(id=>{const q=question(id), selected=s.answers[id]||'',points=score(q,selected); units+=points; if(points===40) full++; else {wrong.push(id); if(points>0)partial++;}return {id,number:q.number,typeId:q.typeId,selected,points:points/10,full:points===40};});return {points:units/10,max:s.ids.length*4,full,partial,wrong,items};}
-  function persist() {sessions[sessionKey()]=session;const saved=storage.set('-sessions',sessions);$('draftStatus').textContent=saved ? (session.graded?'本次答案已鎖定':'已保存在這台裝置') : '裝置空間不足，請勿關閉頁面';}
+  function readSessions() {
+    const value=storage.get('-sessions',null);
+    return value&&typeof value==='object'&&!Array.isArray(value) ? value : storage.get('-sessions-backup',{});
+  }
+  function draftCards() {
+    return bank.papers.flatMap(p=>{
+      const s=sessions['paper-'+p.id];
+      if(!s||s.graded||s.version!==bank.version)return [];
+      const count=p.questions.filter(q=>s.answers?.[q.id]).length;
+      return count?[`<div class="record"><strong>${esc(p.title)}</strong><p>已答 ${count} / ${p.questions.length} 題，尚未交卷</p><button type="button" data-resume-paper="${p.id}">繼續作答</button></div>`]:[];
+    }).join('');
+  }
+  function renderDrafts() {
+    const cards=draftCards();$('draftPanel').hidden=!cards;$('draftList').innerHTML=cards;
+  }
+  function persist() {
+    // Merge only this tab's edits into the latest snapshot. A stale tab must
+    // never replace another tab's answers or the drafts of other papers.
+    const latest=readSessions(),remote=latest[sessionKey()];
+    if(remote&&sessionBase&&remote.version===session.version) {
+      if(remote.attemptId!==session.attemptId) {
+        session=copy(remote);announce('另一個頁面已開始新的一次作答，已載入最新進度。');
+      } else if(remote.graded) {
+        session={...copy(remote),currentId:session.currentId!==sessionBase.currentId?session.currentId:remote.currentId};
+      } else {
+        const answers={...(remote.answers||{})};
+        for(const id of new Set([...Object.keys(sessionBase.answers||{}),...Object.keys(session.answers||{})])) {
+          if(session.answers[id]===sessionBase.answers?.[id])continue;
+          if(session.answers[id])answers[id]=session.answers[id];else delete answers[id];
+        }
+        const merged=copy(remote);
+        for(const key of Object.keys(session))if(key!=='answers'&&JSON.stringify(session[key])!==JSON.stringify(sessionBase[key]))merged[key]=session[key];
+        session={...merged,answers};
+      }
+    }
+    session.updatedAt=new Date().toISOString();
+    sessions={...latest,[sessionKey()]:session};
+    draftSaved=storage.set('-sessions',sessions);
+    if(draftSaved) {storage.set('-sessions-backup',sessions);sessionBase=copy(session);}
+    $('draftStatus').textContent=draftSaved ? (session.graded?'本次答案已鎖定':'已保存，關閉後可繼續') : '無法保存：請勿關閉或離開此頁';
+    $('storageWarning').hidden=draftSaved;
+    renderDrafts();
+  }
+  function syncCurrent() {
+    if(!session||!draftSaved)return;
+    const latest=readSessions(),remote=latest[sessionKey()];
+    sessions=latest;
+    if(remote?.version===bank.version&&JSON.stringify(remote)!==JSON.stringify(sessionBase)) {
+      session=copy(remote);sessionBase=copy(session);render();
+    }
+    renderDrafts();
+  }
+  function resumePaper(id) {
+    paperId=id;$('paperSelect').value=id;navigate('paper');
+    if($('recordsDialog').open)$('recordsDialog').close();
+    alignQuestionPager();
+  }
   function newSession(ids,title) {return {version:bank.version,attemptId:uuid(),ids,title,answers:{},graded:false,startedAt:new Date().toISOString()};}
   function randomItems(items,n) {const a=[...items];for(let i=a.length-1;i>0;i--){const r=new Uint32Array(1);crypto.getRandomValues(r);const j=r[0]%(i+1);[a[i],a[j]]=[a[j],a[i]];}return a.slice(0,n);}
   function selectSession(fresh=false) {
+    if(draftSaved)sessions=readSessions();
     const saved=sessions[sessionKey()];
-    if(!fresh&&saved?.version===bank.version&&saved.ids.every(id=>question(id))) session=saved;
+    sessionBase=null;
+    if(!fresh&&saved?.version===bank.version&&saved.ids.every(id=>question(id))) {session=copy(saved);sessionBase=copy(saved);}
     else if(mode==='paper') {
       const p=bank.papers.find(p=>p.id===paperId);
       session=newSession(p.questions.map(q=>q.id),p.title);
@@ -97,6 +157,7 @@
   }
   async function loadLeaderboard() {const id=paperId;try {const res=await api('/api/leaderboard?paper='+encodeURIComponent(id));if(mode!=='paper'||paperId!==id)return;$('leaderboardContent').innerHTML=res.records.length?`<ol class="rank-list">${res.records.map((r,i)=>`<li><span>${i+1}. ${esc(r.className)}・${esc(r.seatNumber)} 號</span><strong>${fmt(r.score)} 分</strong></li>`).join('')}</ol>`:'這份練習卷還沒有成績，完成後就會出現在這裡。';}catch{if(mode==='paper'&&paperId===id)$('leaderboardContent').textContent='排行榜暫時無法連線；你仍然可以作答、批改和閱讀詳解。';}}
   function grade() {
+    syncCurrent();
     if(session.graded)return;
     if(mode==='paper'&&!$('studentForm').reportValidity()) {$('studentForm').scrollIntoView({behavior:'smooth',block:'center'});return;}
     const unanswered=session.ids.filter(id=>!session.answers[id]);if(unanswered.length&&!confirm(`還有 ${unanswered.length} 題未作答，未答會得 0 分。確定交卷嗎？`))return;
@@ -107,24 +168,32 @@
   function downloadFile(text,name,type='text/plain;charset=utf-8') {const url=URL.createObjectURL(new Blob([text],{type}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
   function downloadAttempt() {const r=grading();const lines=[session.title,`${session.student?.className||''} ${session.student?.seatNumber||''} 號 ${session.student?.studentName||''}`,`得分：${fmt(r.points)} / ${r.max}`,`時間：${session.finishedAt}`,...r.items.map((item,i)=>{const q=question(item.id);return `第 ${i+1} 題 ${q.title}：作答 ${item.selected||'未答'}，正解 ${q.answer}，${fmt(item.points)} 分`;})];downloadFile(lines.join('\n'),session.title+'-作答紀錄.txt');}
   async function showRecords() {
+    syncCurrent();
     const dialog=$('recordsDialog');if(!dialog.open)dialog.showModal();$('recordsContent').innerHTML='<p class="empty">讀取紀錄中…</p>';const oldPending=legacy('-history',[]).filter(r=>r.mode==='paper'&&!r.sent&&legacy('-send',{})[r.attemptId]?.state!=='sent'&&sendStatuses[r.attemptId]?.state!=='sent').map(r=>({...r,title:'一段待補送・'+r.title,version:'115-1-v1'}));
     let records=[...history,...oldPending];let remote=false;
     try {const res=await api('/api/records');remote=true;for(const r of res.records) if(!records.some(v=>v.attemptId===r.attemptId))records.push({...r,title:`練習卷 ${r.paperId}`,max:r.max??bank.papers.find(p=>p.id===r.paperId).questions.length*4,mode:'paper',sent:true});}catch{}
     records.sort((a,b)=>new Date(b.finishedAt)-new Date(a.finishedAt));
-    $('recordsContent').innerHTML=(!remote?'<p class="empty">目前顯示本機紀錄；老師端連線恢復後可再查詢。</p>':'')+(records.length?records.map(r=>`<div class="record"><div class="record-top"><strong>${esc(r.title)}</strong><strong>${fmt(r.score)} / ${r.max}</strong></div><p>${esc(new Date(r.finishedAt).toLocaleString('zh-TW',{timeZone:'Asia/Taipei'}))}・${r.mode==='paper'?(sendStatuses[r.attemptId]?.state==='sent'||r.sent?'已送達老師端':'本機保存，尚未送達'):'補強練習'}</p><p>${r.wrong?.length?`未得滿分 ${r.wrong.length} 題`:'全部答對'}</p>${r.mode==='paper'&&r.version!=='115-1-exam2-v1'&&!r.sent&&sendStatuses[r.attemptId]?.state!=='sent'?`<button type="button" data-retry-record="${esc(r.attemptId)}">補送這筆紀錄</button>`:''}</div>`).join(''):'<p class="empty">還沒有紀錄，先完成一次練習。</p>');
+    $('recordsContent').innerHTML=(draftCards()?'<h3>尚未完成的考卷</h3>'+draftCards()+'<h3>已交卷紀錄</h3>':'')+(!remote?'<p class="empty">目前顯示本機紀錄；老師端連線恢復後可再查詢。</p>':'')+(records.length?records.map(r=>`<div class="record"><div class="record-top"><strong>${esc(r.title)}</strong><strong>${fmt(r.score)} / ${r.max}</strong></div><p>${esc(new Date(r.finishedAt).toLocaleString('zh-TW',{timeZone:'Asia/Taipei'}))}・${r.mode==='paper'?(sendStatuses[r.attemptId]?.state==='sent'||r.sent?'已送達老師端':'本機保存，尚未送達'):'補強練習'}</p><p>${r.wrong?.length?`未得滿分 ${r.wrong.length} 題`:'全部答對'}</p>${r.mode==='paper'&&r.version!=='115-1-exam2-v1'&&!r.sent&&sendStatuses[r.attemptId]?.state!=='sent'?`<button type="button" data-retry-record="${esc(r.attemptId)}">補送這筆紀錄</button>`:''}</div>`).join(''):'<p class="empty">還沒有紀錄，先完成一次練習。</p>');
   }
-  function retryWrong() {const r=grading();if(!r.wrong.length)return;const title=session.title+'・錯題重練';mode='retry';session=newSession(r.wrong,title);onlyWrong=false;persist();render();$('workspace').scrollIntoView({behavior:'smooth',block:'start'});}
+  function retryWrong() {const r=grading();if(!r.wrong.length)return;const title=session.title+'・錯題重練';mode='retry';sessionBase=null;session=newSession(r.wrong,title);onlyWrong=false;persist();storage.set('-view',{mode,paperId,typeId});render();$('workspace').scrollIntoView({behavior:'smooth',block:'start'});}
   async function start() {
     try {const res=await fetch('bank.json?v=exam2-2');if(!res.ok)throw Error();bank=await res.json();if(bank.version!=='115-1-exam2-v2')throw Error();}
     catch {$('quizForm').innerHTML='<p class="notice">題庫載入失敗，請重新整理頁面。</p>';return;}
     const s=storage.get('-student',legacy('-student',{}));for(const id of ['className','seatNumber','studentName'])$(id).value=s[id]||'';saveStudent();
     $('paperSelect').innerHTML=bank.papers.map(p=>`<option value="${p.id}">${p.title}</option>`).join('');const groups=[...new Set(bank.types.map(t=>t.category))];$('typeSelect').innerHTML=groups.map(c=>`<optgroup label="${esc(c)}">${bank.types.filter(t=>t.category===c).map(t=>`<option value="${t.id}">${t.id}. ${esc(t.title)}</option>`).join('')}</optgroup>`).join('');
-    const savedView=storage.get('-view',{});if(bank.papers.some(p=>p.id===savedView.paperId))paperId=savedView.paperId;if(bank.types.some(t=>t.id===savedView.typeId))typeId=savedView.typeId;mode=savedView.mode==='type'?'type':'paper';$('paperSelect').value=paperId;$('typeSelect').value=typeId;selectSession();
+    const savedView=storage.get('-view',{});if(bank.papers.some(p=>p.id===savedView.paperId))paperId=savedView.paperId;if(bank.types.some(t=>t.id===savedView.typeId))typeId=savedView.typeId;mode=savedView.mode==='retry'&&sessions.retry?.version===bank.version?'retry':savedView.mode==='type'?'type':'paper';$('paperSelect').value=paperId;$('typeSelect').value=typeId;selectSession();
+    if(!session.graded&&Object.keys(session.answers).length)announce(`已恢復${session.title}，已答 ${Object.keys(session.answers).length} 題，可接著作答。`);
+    $('draftPanel').addEventListener('click',e=>{const b=e.target.closest('[data-resume-paper]');if(b)resumePaper(b.dataset.resumePaper);});
+    window.addEventListener('focus',syncCurrent);
+    window.addEventListener('pageshow',syncCurrent);
+    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')syncCurrent();});
+    window.addEventListener('pagehide',()=>{if(session)persist();});
+    window.addEventListener('beforeunload',e=>{if(!draftSaved&&session&&!session.graded&&Object.keys(session.answers).length){e.preventDefault();e.returnValue='';}});
     $('studentForm').addEventListener('input',saveStudent);$('studentForm').addEventListener('submit',e=>e.preventDefault());$('quizForm').addEventListener('submit',e=>e.preventDefault());
     $('paperTab').addEventListener('click',()=>navigate('paper'));$('typeTab').addEventListener('click',()=>navigate('type'));
     $('paperSelect').addEventListener('change',()=>{paperId=$('paperSelect').value;navigate('paper');});$('typeSelect').addEventListener('change',()=>{typeId=Number($('typeSelect').value);navigate('type');});
-    $('resetButton').addEventListener('click',()=>{if(!session.graded&&Object.keys(session.answers).length&&!confirm('這次尚未交卷。確定清除本次作答並重新開始嗎？'))return;if(mode==='retry'){session=newSession([...session.ids],session.title);onlyWrong=false;persist();render();}else selectSession(true);});
-    $('quizForm').addEventListener('change',e=>{if(session.graded||!e.target.matches('input'))return;const article=e.target.closest('[data-id]');const checked=[...article.querySelectorAll('input:checked')].map(el=>el.value).sort().join('');if(checked)session.answers[article.dataset.id]=checked;else delete session.answers[article.dataset.id];persist();updateProgress();});
+    $('resetButton').addEventListener('click',()=>{if(!session.graded&&Object.keys(session.answers).length&&!confirm('這次尚未交卷。確定清除本次作答並重新開始嗎？'))return;if(mode==='retry'){sessionBase=null;session=newSession([...session.ids],session.title);onlyWrong=false;persist();render();}else selectSession(true);});
+    $('quizForm').addEventListener('change',e=>{if(session.graded||!e.target.matches('input'))return;const article=e.target.closest('[data-id]');const checked=[...article.querySelectorAll('input:checked')].map(el=>el.value).sort().join('');if(checked)session.answers[article.dataset.id]=checked;else delete session.answers[article.dataset.id];persist();drawPage();});
     bindQuestionPager($('quizForm'),$('prev'),$('next'),turnPage);
     $('questionNav').addEventListener('click',e=>{
       const button=e.target.closest('[data-jump]');
@@ -136,7 +205,7 @@
     $('gradeButton').addEventListener('click',grade);
     $('wrongFilter').addEventListener('click',()=>{onlyWrong=!onlyWrong;drawPage();persist();alignQuestionPager();});
     $('retryWrong').addEventListener('click',retryWrong);
-    $('refreshLeaderboard').addEventListener('click',loadLeaderboard);$('recordsButton').addEventListener('click',showRecords);$('closeRecords').addEventListener('click',()=>$('recordsDialog').close());$('recordsContent').addEventListener('click',async e=>{const b=e.target.closest('[data-retry-record]');if(!b)return;const r=history.find(x=>x.attemptId===b.dataset.retryRecord)||{...legacy('-history',[]).find(x=>x.attemptId===b.dataset.retryRecord),version:'115-1-v1'};b.disabled=true;await sendAttempt(r);showRecords();});
+    $('refreshLeaderboard').addEventListener('click',loadLeaderboard);$('recordsButton').addEventListener('click',showRecords);$('closeRecords').addEventListener('click',()=>$('recordsDialog').close());$('recordsContent').addEventListener('click',async e=>{const resume=e.target.closest('[data-resume-paper]');if(resume){resumePaper(resume.dataset.resumePaper);return;}const b=e.target.closest('[data-retry-record]');if(!b)return;const r=history.find(x=>x.attemptId===b.dataset.retryRecord)||{...legacy('-history',[]).find(x=>x.attemptId===b.dataset.retryRecord),version:'115-1-v1'};b.disabled=true;await sendAttempt(r);showRecords();});
     window.addEventListener('online',()=>{if(session.graded&&mode==='paper')sendAttempt(session);});
     // A small public test seam exposes pure scoring only; it contains no server credentials.
     window.SportsPractice={score,version:bank.version};

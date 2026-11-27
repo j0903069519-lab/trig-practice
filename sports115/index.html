@@ -7,14 +7,16 @@
   <title>高一體育班｜數學段考練習</title>
   <link rel="stylesheet" href="vendor/katex.min.css"><link rel="stylesheet" href="styles.css?v=20261007-title">
   <script defer src="vendor/katex.min.js"></script><script defer src="vendor/auto-render.min.js"></script>
-  <link rel="stylesheet" href="exam2.css?v=pager1"><script defer src="pager.js?v=1"></script><script defer src="geometry.js?v=1"></script><script defer src="app.js?v=exam2-2-pager"></script>
+  <link rel="stylesheet" href="exam2.css?v=pager1"><script defer src="pager.js?v=1"></script><script defer src="geometry.js?v=1"></script><script defer src="app.js?v=exam2-2-drafts-20261127"></script>
 </head>
 <body>
 <a class="skip-link" href="#workspace">跳到練習題</a>
 <header class="topbar"><div class="brand"><span class="brand-mark" aria-hidden="true">數</span><div><p>丹鳳高中・高一體育班</p><h1>第二次段考練習</h1></div></div><div class="header-score" id="headerScore">準備開始</div></header>
 <main><nav class="areas" aria-label="練習區"><a href="basics.html">基礎技能複習</a><a aria-current="page" href="./">二段模擬考卷</a></nav>
   <section class="intro practice-intro"><div><p class="eyebrow">115 學年度・第一學期</p><h2>二段模擬考卷</h2><p>選一份練習卷，作答後查看逐步詳解。</p></div><div class="intro-meta"><span>10 份練習卷</span><span>20 種題型</span><a class="paper-export" href="#questionPager">開始作答 ↓</a></div></section>
-  <section class="student-panel panel"><div class="section-head"><h2>作答資料</h2><span id="studentStatus" class="muted">練習卷交卷前需填寫</span></div><form id="studentForm"><label>班級<input id="className" maxlength="20" placeholder="例：體育一甲" autocomplete="organization" required></label><label>座號<input id="seatNumber" maxlength="3" inputmode="numeric" pattern="[0-9]{1,3}" placeholder="例：12" required></label><label>姓名<input id="studentName" maxlength="30" placeholder="請輸入姓名" autocomplete="name" required></label></form><div class="student-footer"><p>本機自動記住資料與尚未完成的作答。</p><button class="text-button" id="recordsButton" type="button">我的作答紀錄 ↗</button></div></section>
+  <section class="student-panel panel"><div class="section-head"><h2>作答資料</h2><span id="studentStatus" class="muted">練習卷交卷前需填寫</span></div><form id="studentForm"><label>班級<input id="className" maxlength="20" placeholder="例：體育一甲" autocomplete="organization" required></label><label>座號<input id="seatNumber" maxlength="3" inputmode="numeric" pattern="[0-9]{1,3}" placeholder="例：12" required></label><label>姓名<input id="studentName" maxlength="30" placeholder="請輸入姓名" autocomplete="name" required></label></form><div class="student-footer"><p>每次選答案立即保存。離開後請用同一台手機、同一個瀏覽器及原網址繼續。</p><button class="text-button" id="recordsButton" type="button">作答紀錄／繼續作答 ↗</button></div></section>
+  <section id="draftPanel" class="panel" hidden><h2>繼續未完成的考卷</h2><p>選擇上次寫到一半的卷，答案和題號會一起恢復。草稿保存在目前瀏覽器，尚未送到老師端。</p><details><summary>查看未完成考卷</summary><div id="draftList"></div></details></section>
+  <p id="storageWarning" class="notice" role="alert" hidden>這個瀏覽器目前無法保存作答，關閉後可能遺失。請保留此頁完成並交卷，確認已送達老師端。下次請用一般瀏覽模式開啟原網址。</p>
   <nav class="mode-tabs" aria-label="練習模式"><button id="paperTab" class="active" aria-selected="true" type="button">完整考卷<span>20 題・80 分</span></button><button id="typeTab" aria-selected="false" type="button">題型練習<span>一次補強 5 題</span></button></nav>
   <section id="workspace" tabindex="-1">
     <div class="workspace-head"><div><p class="eyebrow" id="modeCaption">完整考卷</p><h2 id="sessionTitle">練習卷 A</h2></div><div class="session-controls"><label id="paperPicker">選擇練習卷<select id="paperSelect" aria-label="選擇練習卷"></select></label><label id="typePicker" hidden>選擇題型<select id="typeSelect" aria-label="選擇題型"></select></label><a class="paper-export" id="paperExport" href="print/A.pdf" download="二段練習卷_A.pdf">輸出紙本題目</a><button id="resetButton" type="button">重新作答</button></div></div>
